@@ -1,0 +1,23 @@
+{
+    "css": [
+        "node_modules/bootstrap/dist/css/bootstrap.css",
+        "node_modules/lato-font/css/lato-font.css",
+        "node_modules/font-awesome/css/font-awesome.css"
+    ],
+    "fonts": [
+        "node_modules/lato-font/fonts/**/*",
+        "node_modules/font-awesome/fonts/*"
+    ],
+    "js": [
+        "babel-polyfill",
+        "ramda",
+        "react",
+        "react-bootstrap",
+        "react-dom",
+        "react-redux",
+        "react-router",
+        "redux",
+        "redux-thunk",
+        "redux-logger"
+    ]
+}
