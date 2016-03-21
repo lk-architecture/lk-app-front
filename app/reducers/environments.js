@@ -3,7 +3,12 @@ export default function environments () {
         {
             id: "environment1",
             name: "dev",
+            region: "eu-west-1",
             services: {
+                s3: {
+                    eventsBucket: "archive",
+                    lambdaBuildsBucket: "lambdas"
+                },
                 kinesis: {
                     streamName: "entrypoint",
                     shardsNumber: 8

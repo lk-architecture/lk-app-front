@@ -1,9 +1,13 @@
 import {combineReducers} from "redux";
+import {reducer as form} from "redux-form";
 
-import auth from "reducers/auth";
 import environments from "reducers/environments";
+import hasRehydrated from "reducers/has-rehydrated";
+import settings from "reducers/settings";
 
 export default combineReducers({
-    auth,
-    environments
+    environments,
+    form,
+    hasRehydrated,
+    settings
 });

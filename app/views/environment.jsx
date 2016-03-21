@@ -24,6 +24,10 @@ class Environment extends Component {
                 <p>{`Stream name: ${environment.services.kinesis.streamName}`}</p>
                 <p>{`Number of shards: ${environment.services.kinesis.shardsNumber}`}</p>
                 <hr />
+                <h4>{"S3"}</h4>
+                <p>{`Lambda builds bucket: ${environment.services.s3.lambdaBuildsBucket}`}</p>
+                <p>{`Events bucket: ${environment.services.s3.eventsBucket}`}</p>
+                <hr />
                 <h4>{"Lambdas"}</h4>
                 <Table
                     collection={environment.services.lambda.lambdas}

@@ -1,8 +1,31 @@
-import React, {Component} from "react";
-import {Input} from "react-bootstrap";
+import React, {Component, PropTypes} from "react";
 import {connect} from "react-redux";
+import {bindActionCreators} from "redux";
+
+import {saveSettings} from "actions/settings";
+import SettingsForm from "components/settings-form";
 
 class Settings extends Component {
+
+    static propTypes = {
+        hasRehydrated: PropTypes.bool.isRequired,
+        saveSettings: PropTypes.func.isRequired,
+        settings: PropTypes.object.isRequired
+    }
+
+    handleSubmit (settings) {
+        this.props.saveSettings(settings);
+    }
+
+    renderForm () {
+        const {hasRehydrated, settings} = this.props;
+        return hasRehydrated ? (
+            <SettingsForm
+                initialValues={settings}
+                onSubmit={::this.handleSubmit}
+            />    
+        ) : null;
+    }
 
     render () {
         return (
@@ -11,15 +34,22 @@ class Settings extends Component {
                     {"Settings"}
                 </h2>
                 <hr />
-                <Input
-                    label="S3 bucket"
-                    placeholder="lambdas"
-                    type="text"
-                />
+                {this.renderForm()}
             </div>
         );
     }
 
 }
 
-export default connect()(Settings);
+function mapStateToProps (state) {
+    return {
+        settings: state.settings,
+        hasRehydrated: state.hasRehydrated
+    };
+}
+function mapDispatchToProps (dispatch) {
+    return {
+        saveSettings: bindActionCreators(saveSettings, dispatch)
+    };
+}
+export default connect(mapStateToProps, mapDispatchToProps)(Settings);

@@ -15,7 +15,7 @@ const store = compose(
 )(createStore)(rootReducer, {}, autoRehydrate());
 
 persistStore(store, {
-    whitelist: ["auth"]
+    whitelist: ["settings"]
 });
 
 export default store;

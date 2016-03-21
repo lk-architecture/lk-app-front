@@ -1,12 +1,9 @@
+import {isEmpty} from "ramda";
 import React, {Component, PropTypes} from "react";
 import {Grid} from "react-bootstrap";
 import {connect} from "react-redux";
-import {bindActionCreators} from "redux";
 
-import {login} from "actions/auth";
 import Header from "components/header";
-import LoginModal from "components/login-modal";
-import {auth} from "lib/app-prop-types";
 import measures from "lib/measures";
 
 const styles = {
@@ -22,18 +19,17 @@ const styles = {
 class Root extends Component {
 
     static propTypes = {
-        auth: auth.isRequired,
         children: PropTypes.node.isRequired,
-        login: PropTypes.func.isRequired
+        emptySettings: PropTypes.bool.isRequired
     };
 
-    renderApp () {
-        const {children} = this.props;
+    render () {
+        const {children, emptySettings} = this.props;
         return (
             <div>
                 <Grid>
                     <div style={styles.header}>
-                        <Header />
+                        <Header emptySettings={emptySettings} />
                     </div>
                 </Grid>
                 <hr style={{marginTop: "0px"}} />
@@ -46,32 +42,11 @@ class Root extends Component {
         );
     }
 
-    renderLogin () {
-        const {login} = this.props;
-        return (
-            <LoginModal onLogin={login} />
-        );
-    }
-
-    render () {
-        const {auth} = this.props;
-        return (
-            auth.isLoggedIn ?
-            this.renderApp() :
-            this.renderLogin()
-        );
-    }
-
 }
 
 function mapStateToProps (state) {
     return {
-        auth: state.auth
+        emptySettings: isEmpty(state.settings)
     };
 }
-function mapDispatchToProps (dispatch) {
-    return {
-        login: bindActionCreators(login, dispatch)
-    };
-}
-export default connect(mapStateToProps, mapDispatchToProps)(Root);
+export default connect(mapStateToProps)(Root);
