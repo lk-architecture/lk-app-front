@@ -1,8 +1,6 @@
-import React, {Component, PropTypes} from "react";
+import React, {Component} from "react";
 
 import Icon from "components/icon";
-import Spacer from "components/spacer";
-import * as colors from "lib/colors";
 import history from "lib/history";
 
 const styles = {
@@ -16,28 +14,10 @@ const styles = {
     },
     logo: {
         cursor: "pointer"
-    },
-    emptySettingsWarning: {
-        color: colors.red
     }
 };
 
 export default class Header extends Component {
-
-    static propTypes = {
-        emptySettings: PropTypes.bool.isRequired
-    }
-
-    renderEmptySettingsWarning () {
-        const {emptySettings} = this.props;
-        return emptySettings ? (
-            <span style={styles.emptySettingsWarning}>
-                {"Configuration needed"}
-                <Spacer direction="h" size={10} />
-                <Icon icon="arrow-right" />
-            </span>
-        ) : null;
-    }
 
     render () {
         return (
@@ -48,8 +28,6 @@ export default class Header extends Component {
                     </h4>
                 </div>
                 <div>
-                    {this.renderEmptySettingsWarning()}
-                    <Spacer direction="h" size={10} />
                     <Icon
                         icon="gear"
                         onClick={() => history.push("/settings")}
