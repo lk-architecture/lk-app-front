@@ -1,5 +1,8 @@
 import React, {Component} from "react";
 
+import Icon from "components/icon";
+import history from "lib/history";
+
 const styles = {
     header: {
         position: "relative",
@@ -18,6 +21,13 @@ export default class Header extends Component {
             <div style={styles.header}>
                 <div>
                     <h4>{"lk-app"}</h4>
+                </div>
+                <div>
+                    <Icon
+                        icon="gear"
+                        onClick={() => history.push("/settings")}
+                        size="18px"
+                    />
                 </div>
             </div>
         );

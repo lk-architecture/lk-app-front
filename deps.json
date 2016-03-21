@@ -17,7 +17,8 @@
         "react-redux",
         "react-router",
         "redux",
-        "redux-thunk",
-        "redux-logger"
+        "redux-form",
+        "redux-logger",
+        "redux-thunk"
     ]
 }

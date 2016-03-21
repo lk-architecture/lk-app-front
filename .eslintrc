@@ -14,7 +14,6 @@
         "babel/generator-star-spacing": [2],
         "babel/new-cap": [2],
         "babel/object-curly-spacing": [2],
-        "babel/object-shorthand": [2],
         "babel/arrow-parens": [0],
         "babel/no-await-in-loop": [2],
         "brace-style": [2, "1tbs"],

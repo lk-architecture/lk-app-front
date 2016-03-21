@@ -1,6 +1,7 @@
 import {combineReducers} from "redux";
 
-const dummy = () => ({});
+import environments from "reducers/environments";
+
 export default combineReducers({
-    dummy
+    environments
 });
