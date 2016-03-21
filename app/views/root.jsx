@@ -4,8 +4,8 @@ import {Grid} from "react-bootstrap";
 import {connect} from "react-redux";
 
 import Header from "components/header";
-import * as colors from "lib/colors";
 import measures from "lib/measures";
+import Settings from "views/settings";
 
 const styles = {
     header: {
@@ -14,10 +14,6 @@ const styles = {
     },
     content: {
         width: "100%"
-    },
-    emptySettingsWarning: {
-        color: colors.red,
-        textAlign: "center"
     }
 };
 
@@ -48,7 +44,7 @@ class Root extends Component {
                 <hr style={{marginTop: "0px"}} />
                 <Grid>
                     <div style={styles.content}>
-                        {emptySettings ? this.renderEmptySettingsWarning() : children}
+                        {emptySettings ? <Settings /> : children}
                     </div>
                 </Grid>
             </div>
