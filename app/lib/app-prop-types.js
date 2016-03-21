@@ -1,5 +1,13 @@
 import {PropTypes} from "react";
 
+export const auth = PropTypes.shape({
+    isLoggedIn: PropTypes.bool.isRequired,
+    credentials: PropTypes.shape({
+        accessKeyId: PropTypes.string.isRequired,
+        secretAccessKey: PropTypes.string.isRequired
+    })
+});
+
 export const kvPair = PropTypes.shape({
     key: PropTypes.string,
     value: PropTypes.string
