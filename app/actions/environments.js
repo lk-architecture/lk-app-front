@@ -1,13 +1,38 @@
-import {resolve} from "bluebird";
-
-import {} from "lib/axios";
+import store from "lib/store";
+import getDynamodb from "services/dynamodb";
 
 export const ENVIRONMENTS_LIST_START = "ENVIRONMENTS_LIST_START";
 export const ENVIRONMENTS_LIST_SUCCESS = "ENVIRONMENTS_LIST_SUCCESS";
 export const ENVIRONMENTS_LIST_ERROR = "ENVIRONMENTS_LIST_ERROR";
 
 export function listEnvironments () {
-    return dispatch => {
+    const settings = store.getState().settings;
+    const tableName = `${settings.dynamodbTablesBaseName}-environments`;
+    const dynamodb = getDynamodb({
+        endpoint: settings.dynamodbEndpoint,
+        region: settings.awsRegion,
+        accessKeyId: settings.awsAccessKeyId,
+        secretAccessKey: settings.awsSecretAccessKey
+    });
+    return async dispatch => {
+        dispatch({type: ENVIRONMENTS_LIST_START});
+        var result;
+        try {
+            result = await dynamodb.scanAsync({TableName: tableName});
+        } catch (error) {
+            // We're only interested in catching errors of the queryAsync call,
+            // not those that might get thrown by the dispatch call.
+            dispatch({
+                type: ENVIRONMENTS_LIST_ERROR,
+                payload: error,
+                error: true
+            });
+            return;
+        }
+        dispatch({
+            type: ENVIRONMENTS_LIST_SUCCESS,
+            payload: result.Items
+        });
     };
 }
 
@@ -15,12 +40,5 @@ export function listEnvironments () {
 // export const ENVIRONMENT_CREATE_SUCCESS = "ENVIRONMENT_CREATE_SUCCESS";
 // export const ENVIRONMENT_CREATE_ERROR = "ENVIRONMENT_CREATE_ERROR";
 //
-// export function createEnvironment (domain) {
-// }
-//
-// export const ENVIRONMENT_GET_START = "ENVIRONMENT_GET_START";
-// export const ENVIRONMENT_GET_SUCCESS = "ENVIRONMENT_GET_SUCCESS";
-// export const ENVIRONMENT_GET_ERROR = "ENVIRONMENT_GET_ERROR";
-//
-// export function getEnvironment (appId) {
+// export function createEnvironment () {
 // }

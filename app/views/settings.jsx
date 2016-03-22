@@ -4,13 +4,14 @@ import {bindActionCreators} from "redux";
 
 import {saveSettings} from "actions/settings";
 import SettingsForm from "components/settings-form";
+import {settings} from "lib/app-prop-types";
 
 class Settings extends Component {
 
     static propTypes = {
         hasRehydrated: PropTypes.bool.isRequired,
         saveSettings: PropTypes.func.isRequired,
-        settings: PropTypes.object.isRequired
+        settings: settings.isRequired
     }
 
     handleSubmit (settings) {
@@ -23,7 +24,7 @@ class Settings extends Component {
             <SettingsForm
                 initialValues={settings}
                 onSubmit={::this.handleSubmit}
-            />    
+            />
         ) : null;
     }
 

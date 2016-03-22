@@ -4,7 +4,7 @@
   "description": "lk app",
   "main": "app/main.html",
   "scripts": {
-    "dev": "sd-builder dev",
+    "dev": "babel-node scripts/start-dynamodb.js & sd-builder dev",
     "lint": "sd-builder lint",
     "build": "sd-builder build",
     "test": "sd-builder test"
@@ -26,6 +26,7 @@
     "babel-preset-stage-0": "^6.5.0",
     "chai": "^3.5.0",
     "chai-as-promised": "^5.2.0",
+    "dynalite": "^0.17.4",
     "eslint": "^2.2.0",
     "eslint-plugin-babel": "^3.1.0",
     "eslint-plugin-react": "^4.1.0",

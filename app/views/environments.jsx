@@ -1,8 +1,10 @@
 import Table from "bootstrap-table-react";
-import React, {Component} from "react";
+import React, {Component, PropTypes} from "react";
 import {Button} from "react-bootstrap";
 import {connect} from "react-redux";
+import {bindActionCreators} from "redux";
 
+import {listEnvironments} from "actions/environments";
 import Icon from "components/icon";
 import * as AppPropTypes from "lib/app-prop-types";
 import history from "lib/history";
@@ -10,7 +12,12 @@ import history from "lib/history";
 class Environments extends Component {
 
     static propTypes = {
-        environments: AppPropTypes.environmentList
+        environments: AppPropTypes.environmentList,
+        listEnvironments: PropTypes.func.isRequired
+    }
+
+    componentWillMount () {
+        this.props.listEnvironments();
     }
 
     render () {
@@ -51,4 +58,9 @@ function mapStateToProps (state) {
         environments: state.environments
     };
 }
-export default connect(mapStateToProps)(Environments);
+function mapDispatchToProps (dispatch) {
+    return {
+        listEnvironments: bindActionCreators(listEnvironments, dispatch)
+    };
+}
+export default connect(mapStateToProps, mapDispatchToProps)(Environments);

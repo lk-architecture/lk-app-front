@@ -1,11 +1,10 @@
 import {PropTypes} from "react";
 
-export const auth = PropTypes.shape({
-    isLoggedIn: PropTypes.bool.isRequired,
-    credentials: PropTypes.shape({
-        accessKeyId: PropTypes.string.isRequired,
-        secretAccessKey: PropTypes.string.isRequired
-    })
+export const settings = PropTypes.shape({
+    awsAccessKeyId: PropTypes.string,
+    awsSecretAccessKey: PropTypes.string,
+    awsRegion: PropTypes.string,
+    dynamodbTablesBaseName: PropTypes.string
 });
 
 export const kvPair = PropTypes.shape({

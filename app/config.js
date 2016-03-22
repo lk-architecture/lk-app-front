@@ -1,1 +1,1 @@
-export const API_URL = window.APP_CONFIG.API_URL;
+export const NODE_ENV = (window.APP_CONFIG.NODE_ENV || "development");

@@ -1,4 +1,5 @@
 import "babel-polyfill";
+import "aws-sdk/dist/aws-sdk";
 import React from "react";
 import ReactDOM from "react-dom";
 import {Provider} from "react-redux";

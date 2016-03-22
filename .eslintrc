@@ -6,6 +6,9 @@
         "mocha": true,
         "node": true
     },
+    "globals": {
+        "AWS": true
+    },
     "plugins": [
         "react",
         "babel"

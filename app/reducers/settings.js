@@ -1,6 +1,16 @@
+import {NODE_ENV} from "config";
 import {SAVE_SETTINGS} from "actions/settings";
 
-export default function auth (state = {}, action) {
+export default function settings (state = {}, action) {
+    if (NODE_ENV === "development") {
+        return {
+            awsAccessKeyId: "awsAccessKeyId",
+            awsSecretAccessKey: "awsSecretAccessKey",
+            awsRegion: "us-west-1",
+            dynamodbEndpoint: "http://localhost:8000",
+            dynamodbTablesBaseName: "lk-deploy"
+        };
+    }
     const {type, payload} = action;
     switch (type) {
     case SAVE_SETTINGS:

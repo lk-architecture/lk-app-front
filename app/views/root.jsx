@@ -21,7 +21,8 @@ class Root extends Component {
 
     static propTypes = {
         children: PropTypes.node.isRequired,
-        emptySettings: PropTypes.bool.isRequired
+        emptySettings: PropTypes.bool.isRequired,
+        hasRehydrated: PropTypes.bool.isRequired
     };
 
     renderEmptySettingsWarning () {
@@ -32,7 +33,7 @@ class Root extends Component {
         );
     }
 
-    render () {
+    renderApp () {
         const {children, emptySettings} = this.props;
         return (
             <div>
@@ -51,11 +52,17 @@ class Root extends Component {
         );
     }
 
+    render () {
+        const {hasRehydrated} = this.props;
+        return (hasRehydrated ? this.renderApp() : null);
+    }
+
 }
 
 function mapStateToProps (state) {
     return {
-        emptySettings: isEmpty(state.settings)
+        emptySettings: isEmpty(state.settings),
+        hasRehydrated: state.hasRehydrated
     };
 }
 export default connect(mapStateToProps)(Root);
