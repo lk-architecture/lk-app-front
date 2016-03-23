@@ -7,8 +7,7 @@ export default function settings (state = {}, action) {
             awsAccessKeyId: "awsAccessKeyId",
             awsSecretAccessKey: "awsSecretAccessKey",
             awsRegion: "us-west-1",
-            dynamodbEndpoint: "http://localhost:8000",
-            dynamodbTablesBaseName: "lk-deploy"
+            dynamodbEndpoint: "http://localhost:8000"
         };
     }
     const {type, payload} = action;

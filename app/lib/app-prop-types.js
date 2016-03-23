@@ -3,8 +3,7 @@ import {PropTypes} from "react";
 export const settings = PropTypes.shape({
     awsAccessKeyId: PropTypes.string,
     awsSecretAccessKey: PropTypes.string,
-    awsRegion: PropTypes.string,
-    dynamodbTablesBaseName: PropTypes.string
+    awsRegion: PropTypes.string
 });
 
 export const kvPair = PropTypes.shape({
@@ -14,29 +13,37 @@ export const kvPair = PropTypes.shape({
 export const kvPairList = PropTypes.arrayOf(kvPair);
 
 export const lambda = PropTypes.shape({
-    id: PropTypes.string,
-    name: PropTypes.string,
+    id: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
     defaultConfiguration: PropTypes.shape({
         git: PropTypes.shape({
-            url: PropTypes.string,
-            branch: PropTypes.string
-        }),
-        environment: kvPairList
-    })
+            url: PropTypes.string.isRequired,
+            branch: PropTypes.string.isRequired
+        }).isRequired,
+        environment: kvPairList.isRequired
+    }).isRequired
 });
 export const lambdaList = PropTypes.arrayOf(lambda);
 
 export const environment = PropTypes.shape({
-    id: PropTypes.string,
-    name: PropTypes.string,
+    id: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
     services: PropTypes.shape({
-        kinesis: PropTypes.shape({
-            streamName: PropTypes.string,
-            shardsNumber: PropTypes.number
+        s3: PropTypes.shape({
+            eventsBucket: PropTypes.string.isRequired,
+            lambdasBucket: PropTypes.string.isRequired
         }),
+        kinesis: PropTypes.shape({
+            streamName: PropTypes.string.isRequired,
+            shardsNumber: PropTypes.number.isRequired
+        }).isRequired,
         lambda: PropTypes.shape({
-            lambdas: lambdaList
-        })
-    })
+            lambdas: lambdaList.isRequired
+        }).isRequired
+    }).isRequired
 });
-export const environmentList = PropTypes.arrayOf(environment);
+export const environments = PropTypes.shape({
+    fetching: PropTypes.bool.isRequired,
+    fetchingError: PropTypes.instanceOf(Error),
+    collection: PropTypes.objectOf(environment).isRequired
+});

@@ -48,14 +48,6 @@ class SettingsForm extends Component {
                     type="text"
                     {...fields.awsRegion}
                 />
-                <Input
-                    bsStyle={this.getFieldBsStyle(fields.dynamodbTablesBaseName)}
-                    help={fields.dynamodbTablesBaseName.error}
-                    label="DynamoDB Tables Base Name"
-                    placeholder="lk-deploy"
-                    type="text"
-                    {...fields.dynamodbTablesBaseName}
-                />
                 <Button type="submit">
                     {"Save"}
                 </Button>
@@ -70,8 +62,7 @@ export default reduxForm({
     fields: [
         "awsAccessKeyId",
         "awsSecretAccessKey",
-        "awsRegion",
-        "dynamodbTablesBaseName"
+        "awsRegion"
     ],
     validate: validate
 })(SettingsForm);

@@ -1,4 +1,5 @@
 import Table from "bootstrap-table-react";
+import {values} from "ramda";
 import React, {Component, PropTypes} from "react";
 import {Button} from "react-bootstrap";
 import {connect} from "react-redux";
@@ -12,7 +13,7 @@ import history from "lib/history";
 class Environments extends Component {
 
     static propTypes = {
-        environments: AppPropTypes.environmentList,
+        environments: AppPropTypes.environments,
         listEnvironments: PropTypes.func.isRequired
     }
 
@@ -21,13 +22,14 @@ class Environments extends Component {
     }
 
     render () {
+        const {environments} = this.props;
         return (
             <div>
                 <Table
-                    collection={this.props.environments}
+                    collection={values(environments.collection)}
                     columns={[
-                        "id",
                         "name",
+                        "region",
                         {
                             key: "edit",
                             valueFormatter: (value, environment) => (

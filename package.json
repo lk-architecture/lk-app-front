@@ -38,7 +38,6 @@
   },
   "dependencies": {
     "aws-sdk": "^2.2.45",
-    "axios": "^0.9.1",
     "babel-polyfill": "^6.6.1",
     "bluebird": "^3.3.4",
     "bootstrap": "^3.3.6",

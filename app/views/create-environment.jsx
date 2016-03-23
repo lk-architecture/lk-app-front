@@ -1,48 +1,33 @@
-import React, {Component} from "react";
-import {Button, Input} from "react-bootstrap";
+import React, {Component, PropTypes} from "react";
 import {connect} from "react-redux";
+import {bindActionCreators} from "redux";
 
-// import Icon from "components/icon";
-// import history from "lib/history";
+import {createEnvironment} from "actions/environments";
+import CreateEnvironmentForm from "components/create-environment-form";
 
 class CreateEnvironment extends Component {
 
     static propTypes = {
+        createEnvironment: PropTypes.func.isRequired
     }
 
-    constructor () {
-        super();
-        this.state = {
-            environmentName: ""
-        };
-    }
-
-    handleChange (event) {
-        this.setState({
-            environmentName: event.target.value
-        });
-    }
-
-    addEnvironment () {
-        console.log(`Add environment ${this.state.environmentName}`);
+    handleSubmit ({name, region}) {
+        this.props.createEnvironment(name, region);
     }
 
     render () {
         return (
             <div>
-                <Input
-                    onChange={::this.handleChange}
-                    placeholder="Environment name"
-                    type="text"
-                    value={this.state.environmentName}
-                />
-                <Button onClick={::this.addEnvironment}>
-                    {"Create"}
-                </Button>
+                <CreateEnvironmentForm onSubmit={::this.handleSubmit} />
             </div>
         );
     }
 
 }
 
-export default connect()(CreateEnvironment);
+function mapDispatchToProps (dispatch) {
+    return {
+        createEnvironment: bindActionCreators(createEnvironment, dispatch)
+    };
+}
+export default connect(null, mapDispatchToProps)(CreateEnvironment);

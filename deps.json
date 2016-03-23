@@ -9,7 +9,10 @@
         "node_modules/font-awesome/fonts/*"
     ],
     "js": [
+        "aws-sdk/dist/aws-sdk",
         "babel-polyfill",
+        "bluebird",
+        "bootstrap-table-react",
         "ramda",
         "react",
         "react-bootstrap",
@@ -17,6 +20,7 @@
         "react-redux",
         "react-router",
         "redux",
+        "redux-form",
         "redux-logger",
         "redux-persist",
         "redux-thunk"
