@@ -4,11 +4,14 @@ import {bindActionCreators} from "redux";
 
 import {createEnvironment} from "actions/environments";
 import CreateEnvironmentForm from "components/create-environment-form";
+import StepsProgressIndicator from "components/steps-progress-indicator";
+import * as AppPropTypes from "lib/app-prop-types";
 
 class CreateEnvironment extends Component {
 
     static propTypes = {
-        createEnvironment: PropTypes.func.isRequired
+        createEnvironment: PropTypes.func.isRequired,
+        environmentCreation: AppPropTypes.stepList
     }
 
     handleSubmit ({name, region}) {
@@ -19,10 +22,18 @@ class CreateEnvironment extends Component {
         return (
             <div>
                 <CreateEnvironmentForm onSubmit={::this.handleSubmit} />
+                <hr />
+                <StepsProgressIndicator steps={this.props.environmentCreation} />
             </div>
         );
     }
 
+}
+
+function mapStateToProps (state) {
+    return {
+        environmentCreation: state.environmentCreation
+    };
 }
 
 function mapDispatchToProps (dispatch) {
@@ -30,4 +41,4 @@ function mapDispatchToProps (dispatch) {
         createEnvironment: bindActionCreators(createEnvironment, dispatch)
     };
 }
-export default connect(null, mapDispatchToProps)(CreateEnvironment);
+export default connect(mapStateToProps, mapDispatchToProps)(CreateEnvironment);

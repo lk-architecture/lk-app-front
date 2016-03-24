@@ -1,5 +1,4 @@
 import Table from "bootstrap-table-react";
-import {propEq} from "ramda";
 import React, {Component} from "react";
 import {Button} from "react-bootstrap";
 import {connect} from "react-redux";
@@ -16,6 +15,7 @@ class Environment extends Component {
 
     render () {
         const {environment} = this.props;
+        console.log(environment);
         return (
             <div>
                 <h3>{`Environment: ${environment.name}`}</h3>
@@ -63,9 +63,7 @@ class Environment extends Component {
 
 function mapStateToProps (state, props) {
     return {
-        environment: state.environments.find(
-            propEq("name", props.params.environmentName)
-        )
+        environment: state.environments.collection[props.params.environmentName]
     };
 }
 export default connect(mapStateToProps)(Environment);

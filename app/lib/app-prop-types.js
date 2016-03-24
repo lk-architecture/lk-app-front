@@ -3,7 +3,10 @@ import {PropTypes} from "react";
 export const settings = PropTypes.shape({
     awsAccessKeyId: PropTypes.string,
     awsSecretAccessKey: PropTypes.string,
-    awsRegion: PropTypes.string
+    awsRegion: PropTypes.string,
+    dynamodbEndpoint: PropTypes.string,
+    kinesisEndpoint: PropTypes.string,
+    s3Endpoint: PropTypes.string
 });
 
 export const kvPair = PropTypes.shape({
@@ -47,3 +50,10 @@ export const environments = PropTypes.shape({
     fetchingError: PropTypes.instanceOf(Error),
     collection: PropTypes.objectOf(environment).isRequired
 });
+
+export const step = PropTypes.shape({
+    id: PropTypes.number,
+    label: PropTypes.string,
+    completed: PropTypes.bool
+});
+export const stepList = PropTypes.arrayOf(step);

@@ -4,7 +4,11 @@
   "description": "lk app",
   "main": "app/main.html",
   "scripts": {
-    "dev": "babel-node scripts/start-dynamodb.js & sd-builder dev",
+    "dev:start-s3": "fakes3 -r /tmp/s3 -p 4568",
+    "dev:start-dynamoDb": "babel-node scripts/start-dynamodb.js",
+    "dev:start-kinesis": "babel-node scripts/start-kinesis.js",
+    "dev:main": "sd-builder dev",
+    "dev": "npm-run-all --parallel dev:*",
     "lint": "sd-builder lint",
     "build": "sd-builder build",
     "test": "sd-builder test"
@@ -43,7 +47,9 @@
     "bootstrap": "^3.3.6",
     "bootstrap-table-react": "^1.1.1",
     "font-awesome": "^4.5.0",
+    "kinesalite": "^1.11.4",
     "lato-font": "^1.1.1",
+    "npm-run-all": "^1.6.0",
     "ramda": "^0.19.1",
     "react": "^0.14.7",
     "react-bootstrap": "^0.28.3",
