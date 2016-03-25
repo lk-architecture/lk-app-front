@@ -3,6 +3,9 @@ import React, {Component, PropTypes} from "react";
 import {Button, Input} from "react-bootstrap";
 import {reduxForm} from "redux-form";
 
+import AWSRegionSelect from "components/aws-region-select";
+import CollapsibleParagraph from "components/collapsible-paragraph";
+
 function validate (values) {
     return map(value => (
         typeof value === "string" && value.length > 0 ? null : "Required"
@@ -40,14 +43,37 @@ class SettingsForm extends Component {
                     type="text"
                     {...fields.awsSecretAccessKey}
                 />
-                <Input
+                <AWSRegionSelect
                     bsStyle={this.getFieldBsStyle(fields.awsRegion)}
                     help={fields.awsRegion.error}
-                    label="AWS Region"
-                    placeholder="us-west-1"
-                    type="text"
                     {...fields.awsRegion}
                 />
+                <CollapsibleParagraph title="Advanced">
+                    <Input
+                        bsStyle={this.getFieldBsStyle(fields.dynamodbEndpoint)}
+                        help={fields.dynamodbEndpoint.error}
+                        label="DynamoDB Endpoint"
+                        placeholder="localhost:8000"
+                        type="text"
+                        {...fields.dynamodbEndpoint}
+                    />
+                    <Input
+                        bsStyle={this.getFieldBsStyle(fields.kinesisEndpoint)}
+                        help={fields.kinesisEndpoint.error}
+                        label="Kinesis Endpoint"
+                        placeholder="localhost:4567"
+                        type="text"
+                        {...fields.kinesisEndpoint}
+                    />
+                    <Input
+                        bsStyle={this.getFieldBsStyle(fields.s3Endpoint)}
+                        help={fields.s3Endpoint.error}
+                        label="S3 Endpoint"
+                        placeholder="AWS S3 Endpoint"
+                        type="text"
+                        {...fields.s3Endpoint}
+                    />
+                </CollapsibleParagraph>
                 <Button type="submit">
                     {"Save"}
                 </Button>
@@ -62,7 +88,10 @@ export default reduxForm({
     fields: [
         "awsAccessKeyId",
         "awsSecretAccessKey",
-        "awsRegion"
+        "awsRegion",
+        "dynamodbEndpoint",
+        "kinesisEndpoint",
+        "s3Endpoint"
     ],
     validate: validate
 })(SettingsForm);
