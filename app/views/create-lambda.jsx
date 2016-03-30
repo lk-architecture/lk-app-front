@@ -1,29 +1,38 @@
-import React, {Component} from "react";
-import {Button} from "react-bootstrap";
+import React, {Component, PropTypes} from "react";
 import {connect} from "react-redux";
+import {bindActionCreators} from "redux";
 
-// import Icon from "components/icon";
-// import history from "lib/history";
+import CreateLambaForm from "components/create-lamba-form";
+import {addLambda} from "actions/environments";
 
 class CreateLambda extends Component {
 
     static propTypes = {
+        addLambda: PropTypes.func.isRequired,
+        environmentName: PropTypes.string.isRequired,
+        lambda: PropTypes.string
     }
 
-    addLambda () {
-        console.log("Add lambda");
+    handleSubmit (lambdaInfos) {
+        const {environmentName} = this.props;
+        this.props.addLambda(environmentName, lambdaInfos);
     }
 
     render () {
         return (
-            <div>
-                <Button onClick={::this.addLambda}>
-                    {"Create"}
-                </Button>
-            </div>
+            <CreateLambaForm onSubmit={::this.handleSubmit} />
         );
     }
-
 }
 
-export default connect()(CreateLambda);
+function mapStateToProps (state, props) {
+    return {
+        environmentName: props.params.environmentName
+    };
+}
+function mapDispatchToProps (dispatch) {
+    return {
+        addLambda: bindActionCreators(addLambda, dispatch)
+    };
+}
+export default connect(mapStateToProps, mapDispatchToProps)(CreateLambda);

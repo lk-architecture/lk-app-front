@@ -45,9 +45,7 @@ class Lambda extends Component {
 }
 
 function mapStateToProps (state, props) {
-    const environment = state.environments.find(
-        propEq("name", props.params.environmentName)
-    );
+    const environment = state.environments.collection[props.params.environmentName];
     return {
         lambda: environment.services.lambda.lambdas.find(
             propEq("name", props.params.lambdaName)

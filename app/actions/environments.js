@@ -146,3 +146,75 @@ export function createEnvironment (name, region) {
         });
     };
 }
+
+export const ENVIRONMENT_ADD_LAMBDA = "ENVIRONMENT_ADD_LAMBDA";
+
+export function addLambda (environmentName, lambdaInfos) {
+    const settings = store.getState().settings;
+    const awsSettings = {
+        region: settings.awsRegion,
+        accessKeyId: settings.awsAccessKeyId,
+        secretAccessKey: settings.awsSecretAccessKey
+    };
+    const dynamodb = getDynamodb({...awsSettings, endpoint: settings.dynamodbEndpoint});
+    return async dispatch => {
+        let result = await dynamodb.getAsync({
+            TableName: config.DYNAMODB_ENVIRONMENTS_TABLE,
+            Key: {
+                id: environmentName
+            }
+        });
+        let environment = result.Item;
+        environment.services.lambda.lambdas = [...environment.services.lambda.lambdas, {
+            id: lambdaInfos.name,
+            name: lambdaInfos.name,
+            defaultConfiguration: {
+                environment: lambdaInfos.environment,
+                git: {
+                    url: lambdaInfos.gitUrl,
+                    branch: lambdaInfos.gitBranch
+                }
+            }
+        }];
+        await dynamodb.putAsync({
+            TableName: config.DYNAMODB_ENVIRONMENTS_TABLE,
+            Item: environment
+        });
+        dispatch({
+            type: ENVIRONMENT_ADD_LAMBDA,
+            payload: environment
+        });
+    };
+}
+
+export const ENVIRONMENT_REMOVE_LAMBDA = "ENVIRONMENT_REMOVE_LAMBDA";
+
+export function removeLambda (environmentName, lambdaName) {
+    const settings = store.getState().settings;
+    const awsSettings = {
+        region: settings.awsRegion,
+        accessKeyId: settings.awsAccessKeyId,
+        secretAccessKey: settings.awsSecretAccessKey
+    };
+    const dynamodb = getDynamodb({...awsSettings, endpoint: settings.dynamodbEndpoint});
+    return async dispatch => {
+        let result = await dynamodb.getAsync({
+            TableName: config.DYNAMODB_ENVIRONMENTS_TABLE,
+            Key: {
+                id: environmentName
+            }
+        });
+        let environment = result.Item;
+        environment.services.lambda.lambdas = environment.services.lambda.lambdas.filter((value) => {
+            return !(value.name === lambdaName);
+        });
+        await dynamodb.putAsync({
+            TableName: config.DYNAMODB_ENVIRONMENTS_TABLE,
+            Item: environment
+        });
+        dispatch({
+            type: ENVIRONMENT_REMOVE_LAMBDA,
+            payload: environment
+        });
+    };
+}

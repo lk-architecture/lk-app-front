@@ -1,21 +1,34 @@
 import Table from "bootstrap-table-react";
-import React, {Component} from "react";
+import React, {Component, PropTypes} from "react";
 import {Button} from "react-bootstrap";
 import {connect} from "react-redux";
+import {bindActionCreators} from "redux";
 
 import Icon from "components/icon";
 import * as AppPropTypes from "lib/app-prop-types";
 import history from "lib/history";
+import {listEnvironments, removeLambda} from "actions/environments";
 
 class Environment extends Component {
 
     static propTypes = {
-        environment: AppPropTypes.environment
+        environment: AppPropTypes.environment,
+        listEnvironments: PropTypes.func.isRequired,
+        removeLambda: PropTypes.func.isRequired
     }
 
-    render () {
+    componentWillMount () {
+        this.props.listEnvironments();
+    }
+
+    renderNotFound () {
+        return (
+            <div>{"404 - environment not found :("}</div>
+        );
+    }
+
+    renderPage () {
         const {environment} = this.props;
-        console.log(environment);
         return (
             <div>
                 <h3>{`Environment: ${environment.name}`}</h3>
@@ -25,7 +38,7 @@ class Environment extends Component {
                 <p>{`Number of shards: ${environment.services.kinesis.shardsNumber}`}</p>
                 <hr />
                 <h4>{"S3"}</h4>
-                <p>{`Lambda builds bucket: ${environment.services.s3.lambdaBuildsBucket}`}</p>
+                <p>{`Lambda builds bucket: ${environment.services.s3.lambdasBucket}`}</p>
                 <p>{`Events bucket: ${environment.services.s3.eventsBucket}`}</p>
                 <hr />
                 <h4>{"Lambdas"}</h4>
@@ -39,6 +52,17 @@ class Environment extends Component {
                                 <Icon
                                     icon="edit"
                                     onClick={() => history.push(`/environments/${environment.name}/lambda/${lambda.name}`)}
+                                />
+                            )
+                        },
+                        {
+                            key: "remove",
+                            valueFormatter: (value, lambda) => (
+                                <Icon
+                                    icon="trash"
+                                    onClick={() => {
+                                        this.props.removeLambda(environment.name, lambda.name);
+                                    }}
                                 />
                             )
                         }
@@ -59,6 +83,12 @@ class Environment extends Component {
         );
     }
 
+    render () {
+        return (
+            this.props.environment ? this.renderPage() : this.renderNotFound()
+        );
+    }
+
 }
 
 function mapStateToProps (state, props) {
@@ -66,4 +96,10 @@ function mapStateToProps (state, props) {
         environment: state.environments.collection[props.params.environmentName]
     };
 }
-export default connect(mapStateToProps)(Environment);
+function mapDispatchToProps (dispatch) {
+    return {
+        listEnvironments: bindActionCreators(listEnvironments, dispatch),
+        removeLambda: bindActionCreators(removeLambda, dispatch)
+    };
+}
+export default connect(mapStateToProps, mapDispatchToProps)(Environment);

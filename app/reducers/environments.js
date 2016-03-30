@@ -1,4 +1,6 @@
 import {
+    ENVIRONMENT_ADD_LAMBDA,
+    ENVIRONMENT_REMOVE_LAMBDA,
     ENVIRONMENTS_LIST_START,
     ENVIRONMENTS_LIST_SUCCESS,
     ENVIRONMENTS_LIST_ERROR
@@ -34,6 +36,17 @@ export default function environments (state = defaultEnvironments, action) {
             ...state,
             fetching: false,
             fetchingError: payload
+        };
+    case ENVIRONMENT_ADD_LAMBDA:
+    case ENVIRONMENT_REMOVE_LAMBDA:
+        var nextCollection = {...state.collection};
+        nextCollection[payload.name] = payload;
+        return {
+            fetching: false,
+            fetchingError: null,
+            collection: {
+                ...nextCollection
+            }
         };
     default:
         return state;
