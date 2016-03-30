@@ -173,7 +173,8 @@ export function addLambda (environmentName, lambdaInfos) {
                 git: {
                     url: lambdaInfos.gitUrl,
                     branch: lambdaInfos.gitBranch
-                }
+                },
+                role: lambdaInfos.role
             }
         }];
         await dynamodb.putAsync({

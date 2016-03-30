@@ -19,11 +19,12 @@ export const lambda = PropTypes.shape({
     id: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
     defaultConfiguration: PropTypes.shape({
+        environment: kvPairList.isRequired,
         git: PropTypes.shape({
             url: PropTypes.string.isRequired,
             branch: PropTypes.string.isRequired
         }).isRequired,
-        environment: kvPairList.isRequired
+        role: PropTypes.string.isRequired
     }).isRequired
 });
 export const lambdaList = PropTypes.arrayOf(lambda);

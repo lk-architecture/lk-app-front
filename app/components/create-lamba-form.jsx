@@ -67,6 +67,14 @@ class CreateLambaForm extends Component {
                     type="text"
                     {...fields.gitBranch}
                 />
+                <Input
+                    bsStyle={this.getFieldBsStyle(fields.role)}
+                    help={this.getFieldHelp(fields.role)}
+                    label="AWS role"
+                    placeholder="lambda_basic_execution"
+                    type="text"
+                    {...fields.role}
+                />
                 <p>{"Environment configurations"}</p>
                 <KVInput
                     bsStyle={this.getFieldBsStyle(fields.environment)}
@@ -91,7 +99,8 @@ export default reduxForm({
         "gitUrl",
         "gitBranch",
         "environment",
-        "name"
+        "name",
+        "role"
     ],
     validate: validate
 })(CreateLambaForm);
