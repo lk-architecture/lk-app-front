@@ -4,18 +4,18 @@ import {bindActionCreators} from "redux";
 
 import CreateLambaForm from "components/create-lamba-form";
 import {addLambda} from "actions/environments";
+import * as AppPropTypes from "lib/app-prop-types";
 
 class CreateLambda extends Component {
 
     static propTypes = {
         addLambda: PropTypes.func.isRequired,
-        environmentName: PropTypes.string.isRequired,
+        environment: AppPropTypes.environment,
         lambda: PropTypes.string
     }
 
     handleSubmit (lambdaInfos) {
-        const {environmentName} = this.props;
-        this.props.addLambda(environmentName, lambdaInfos);
+        this.props.addLambda(this.props.environment, lambdaInfos);
     }
 
     render () {
@@ -27,7 +27,7 @@ class CreateLambda extends Component {
 
 function mapStateToProps (state, props) {
     return {
-        environmentName: props.params.environmentName
+        environment: state.environments.collection[props.params.environmentName]
     };
 }
 function mapDispatchToProps (dispatch) {

@@ -149,7 +149,7 @@ export function createEnvironment (name, region) {
 
 export const ENVIRONMENT_ADD_LAMBDA = "ENVIRONMENT_ADD_LAMBDA";
 
-export function addLambda (environmentName, lambdaInfos) {
+export function addLambda (environment, lambdaInfos) {
     const settings = store.getState().settings;
     const awsSettings = {
         region: settings.awsRegion,
@@ -158,13 +158,6 @@ export function addLambda (environmentName, lambdaInfos) {
     };
     const dynamodb = getDynamodb({...awsSettings, endpoint: settings.dynamodbEndpoint});
     return async dispatch => {
-        let result = await dynamodb.getAsync({
-            TableName: config.DYNAMODB_ENVIRONMENTS_TABLE,
-            Key: {
-                id: environmentName
-            }
-        });
-        let environment = result.Item;
         environment.services.lambda.lambdas = [...environment.services.lambda.lambdas, {
             id: lambdaInfos.name,
             name: lambdaInfos.name,
@@ -190,7 +183,7 @@ export function addLambda (environmentName, lambdaInfos) {
 
 export const ENVIRONMENT_REMOVE_LAMBDA = "ENVIRONMENT_REMOVE_LAMBDA";
 
-export function removeLambda (environmentName, lambdaName) {
+export function removeLambda (environment, lambdaName) {
     const settings = store.getState().settings;
     const awsSettings = {
         region: settings.awsRegion,
@@ -199,23 +192,57 @@ export function removeLambda (environmentName, lambdaName) {
     };
     const dynamodb = getDynamodb({...awsSettings, endpoint: settings.dynamodbEndpoint});
     return async dispatch => {
-        let result = await dynamodb.getAsync({
-            TableName: config.DYNAMODB_ENVIRONMENTS_TABLE,
-            Key: {
-                id: environmentName
+        let newEnv = {
+            ...environment,
+            services: {
+                ...environment.services,
+                lambda: {
+                    ...environment.services.lambda,
+                    lambdas: environment.services.lambda.lambdas.filter((value) => {
+                        return !(value.name === lambdaName);
+                    })
+                }
             }
-        });
-        let environment = result.Item;
-        environment.services.lambda.lambdas = environment.services.lambda.lambdas.filter((value) => {
-            return !(value.name === lambdaName);
-        });
+        };
         await dynamodb.putAsync({
             TableName: config.DYNAMODB_ENVIRONMENTS_TABLE,
-            Item: environment
+            Item: newEnv
         });
         dispatch({
             type: ENVIRONMENT_REMOVE_LAMBDA,
-            payload: environment
+            payload: newEnv
+        });
+    };
+}
+
+export const ENVIRONMENT_DO_DEPLOY = "ENVIRONMENT_DO_DEPLOY";
+
+export function deployLambda (environment, lambdaName) {
+    const settings = store.getState().settings;
+    return dispatch => {
+        let request = {
+            aws: {
+                region: settings.awsRegion,
+                accessKeyId: settings.awsRegion,
+                secretAccessKey: settings.awsSecretAccessKey
+            },
+            services: {
+                s3: {
+                    ...environment.services.s3
+                },
+                "kinesis": {
+                    ...environment.services.kinesis
+                },
+                "lambda": {
+                    ...environment.services.lambda.lambdas.find((lambda) => {
+                        return lambda.name === lambdaName;
+                    })
+                }
+            }
+        };
+        dispatch({
+            type: ENVIRONMENT_DO_DEPLOY,
+            payload: request
         });
     };
 }

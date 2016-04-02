@@ -61,7 +61,7 @@ class Environment extends Component {
                                 <Icon
                                     icon="trash"
                                     onClick={() => {
-                                        this.props.removeLambda(environment.name, lambda.name);
+                                        this.props.removeLambda(environment, lambda.name);
                                     }}
                                 />
                             )
