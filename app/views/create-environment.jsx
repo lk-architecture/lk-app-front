@@ -14,8 +14,8 @@ class CreateEnvironment extends Component {
         environmentCreation: AppPropTypes.stepList
     }
 
-    handleSubmit ({name, region}) {
-        this.props.createEnvironment(name, region);
+    handleSubmit ({name}) {
+        this.props.createEnvironment(name);
     }
 
     render () {

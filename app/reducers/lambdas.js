@@ -1,39 +1,39 @@
 import {
-    ENVIRONMENTS_LIST_START,
-    ENVIRONMENTS_LIST_SUCCESS,
-    ENVIRONMENTS_LIST_ERROR
-} from "actions/environments";
+    LAMBDAS_LIST_START,
+    LAMBDAS_LIST_SUCCESS,
+    LAMBDAS_LIST_ERROR
+} from "actions/lambdas";
 import {arrayToCollection} from "lib/utils";
 
-const defaultEnvironments = {
+const defaultLambdas = {
     fetching: false,
     fetchingError: null,
     collection: {}
 };
 
-function getEnvironmentId (environment) {
-    return environment.name;
+function getLambdaId (lambda) {
+    return `${lambda.name}-${lambda.environmentName}`;
 }
 
-export default function environments (state = defaultEnvironments, action) {
+export default function lambdas (state = defaultLambdas, action) {
     const {type, payload} = action;
     switch (type) {
-    case ENVIRONMENTS_LIST_START:
+    case LAMBDAS_LIST_START:
         return {
             ...state,
             fetching: true,
             fetchingError: null
         };
-    case ENVIRONMENTS_LIST_SUCCESS:
+    case LAMBDAS_LIST_SUCCESS:
         return {
             fetching: false,
             fetchingError: null,
             collection: {
                 ...state.collection,
-                ...arrayToCollection(getEnvironmentId, payload)
+                ...arrayToCollection(getLambdaId, payload)
             }
         };
-    case ENVIRONMENTS_LIST_ERROR:
+    case LAMBDAS_LIST_ERROR:
         return {
             ...state,
             fetching: false,

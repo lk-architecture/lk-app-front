@@ -1,6 +1,11 @@
 import {reduce} from "ramda";
 
-export const arrayToCollection = reduce((collection, element) => ({
-    ...collection,
-    [element.id]: element
-}), {});
+export function arrayToCollection (getIdFromElement, array) {
+    return reduce((collection, element) => {
+        const id = getIdFromElement(element);
+        return {
+            ...collection,
+            [id]: {...element, id}
+        };
+    }, {}, array);
+}

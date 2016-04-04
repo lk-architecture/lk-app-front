@@ -75,13 +75,13 @@ class CreateLambaForm extends Component {
                     type="text"
                     {...fields.role}
                 />
-                <p>{"Environment configurations"}</p>
+                <p>{"Environment variables"}</p>
                 <KVInput
-                    bsStyle={this.getFieldBsStyle(fields.environment)}
-                    help={this.getFieldHelp(fields.environment)}
+                    bsStyle={this.getFieldBsStyle(fields.environmentVariables)}
+                    help={this.getFieldHelp(fields.environmentVariables)}
                     onChange={::this.onChangeKeyValuePair}
                     value={this.state.kvPair}
-                    {...fields.environment}
+                    {...fields.environmentVariables}
                 />
                 <hr />
                 <Button type="submit">
@@ -96,11 +96,11 @@ class CreateLambaForm extends Component {
 export default reduxForm({
     form: "lambda",
     fields: [
+        "name",
         "gitUrl",
         "gitBranch",
-        "environment",
-        "name",
-        "role"
+        "role",
+        "environmentVariables"
     ],
     validate: validate
 })(CreateLambaForm);

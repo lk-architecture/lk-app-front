@@ -10,20 +10,49 @@ const dynamodb = new DynamoDB({
 });
 promisifyAll(dynamodb);
 
-export default function setupDynamodb () {
-    return dynamodb.createTableAsync({
+export default async function setupDynamodb () {
+    await dynamodb.createTableAsync({
         AttributeDefinitions: [{
-            AttributeName: "id",
+            AttributeName: "name",
             AttributeType: "S"
         }],
         KeySchema: [{
-            AttributeName: "id",
+            AttributeName: "name",
             KeyType: "HASH"
         }],
         ProvisionedThroughput: {
             ReadCapacityUnits: 10,
             WriteCapacityUnits: 10
         },
-        TableName: "lk-deploy-environments"
+        TableName: "lk-environments"
     });
+    console.log("Created lk-environments table");
+    await dynamodb.createTableAsync({
+        AttributeDefinitions: [
+            {
+                AttributeName: "environmentName",
+                AttributeType: "S"
+            },
+            {
+                AttributeName: "name",
+                AttributeType: "S"
+            }
+        ],
+        KeySchema: [
+            {
+                AttributeName: "environmentName",
+                KeyType: "HASH"
+            },
+            {
+                AttributeName: "name",
+                KeyType: "RANGE"
+            }
+        ],
+        ProvisionedThroughput: {
+            ReadCapacityUnits: 10,
+            WriteCapacityUnits: 10
+        },
+        TableName: "lk-lambdas"
+    });
+    console.log("Created lk-lambdas table");
 }

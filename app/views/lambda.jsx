@@ -1,68 +1,65 @@
+import {find} from "lodash";
 import React, {Component, PropTypes} from "react";
-import {Button, Input} from "react-bootstrap";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 
-import KVInput from "components/kv-input";
-import * as AppPropTypes from "lib/app-prop-types";
-import {deployLambda} from "actions/environments";
+import {listEnvironments} from "actions/environments";
+import {listLambdas, upsertLambda} from "actions/lambdas";
+import CreateLambaForm from "components/create-lamba-form";
 
 class Lambda extends Component {
 
     static propTypes = {
-        deployLambda: PropTypes.func,
-        environment: AppPropTypes.environment,
-        lambda: AppPropTypes.lambda
+        environmentName: PropTypes.string.isRequired,
+        lambda: PropTypes.any,
+        listEnvironments: PropTypes.func.isRequired,
+        listLambdas: PropTypes.func.isRequired,
+        upsertLambda: PropTypes.func.isRequired
     }
 
-    handleDeployClick () {
-        this.props.deployLambda(this.props.environment, this.props.lambda.name);
+    componentWillMount () {
+        this.props.listEnvironments();
+        this.props.listLambdas();
+    }
+
+    handleSubmit (lambdaConfiguration) {
+        this.props.upsertLambda(this.props.environmentName, lambdaConfiguration);
     }
 
     render () {
         const {lambda} = this.props;
-        return (
+        return lambda ? (
             <div>
-                <h3>{`Lambda: ${lambda.name}`}</h3>
-                <hr />
-                <Button onClick={::this.handleDeployClick}>
-                    {"Deploy"}
-                </Button>
-                <Button>
-                    {"Delete"}
-                </Button>
-                <hr />
-                <Input
-                    label="Git URL"
-                    onChange={() => null}
-                    placeholder="https://github.com/example/example.git"
-                    type="text"
-                    value={lambda.defaultConfiguration.git.url}
-                />
-                <hr />
-                <h4>{"Configuration"}</h4>
-                <KVInput
-                    onChange={() => null}
-                    value={lambda.defaultConfiguration.environment}
+                <CreateLambaForm
+                    initialValues={{
+                        name: lambda.name,
+                        gitUrl: lambda.defaultConfiguration.git.url,
+                        gitBranch: lambda.defaultConfiguration.git.branch,
+                        environmentVariables: lambda.defaultConfiguration.environmentVariables,
+                        role: lambda.defaultConfiguration.role
+                    }}
+                    onSubmit={::this.handleSubmit}
                 />
             </div>
-        );
+        ) : null;
     }
 
 }
 
 function mapStateToProps (state, props) {
-    const environment = state.environments.collection[props.params.environmentName];
     return {
-        environment: environment,
-        lambda: environment.services.lambda.lambdas.find((lambda) => {
-            return lambda.name === props.params.lambdaName;
-        })
+        environmentName: props.params.environmentName,
+        lambda: find(state.lambdas.collection, lambda => (
+            lambda.environmentName === props.params.environmentName &&
+            lambda.name === props.params.lambdaName
+        ))
     };
 }
 function mapDispatchToProps (dispatch) {
     return {
-        deployLambda: bindActionCreators(deployLambda, dispatch)
+        listEnvironments: bindActionCreators(listEnvironments, dispatch),
+        listLambdas: bindActionCreators(listLambdas, dispatch),
+        upsertLambda: bindActionCreators(upsertLambda, dispatch)
     };
 }
 export default connect(mapStateToProps, mapDispatchToProps)(Lambda);

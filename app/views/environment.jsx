@@ -1,4 +1,5 @@
 import Table from "bootstrap-table-react";
+import {pickBy, propEq, values} from "ramda";
 import React, {Component, PropTypes} from "react";
 import {Button} from "react-bootstrap";
 import {connect} from "react-redux";
@@ -7,18 +8,21 @@ import {bindActionCreators} from "redux";
 import Icon from "components/icon";
 import * as AppPropTypes from "lib/app-prop-types";
 import history from "lib/history";
-import {listEnvironments, removeLambda} from "actions/environments";
+import {listEnvironments} from "actions/environments";
+import {listLambdas} from "actions/lambdas";
 
 class Environment extends Component {
 
     static propTypes = {
         environment: AppPropTypes.environment,
+        lambdas: PropTypes.any,
         listEnvironments: PropTypes.func.isRequired,
-        removeLambda: PropTypes.func.isRequired
+        listLambdas: PropTypes.func.isRequired
     }
 
     componentWillMount () {
         this.props.listEnvironments();
+        this.props.listLambdas();
     }
 
     renderNotFound () {
@@ -28,7 +32,7 @@ class Environment extends Component {
     }
 
     renderPage () {
-        const {environment} = this.props;
+        const {environment, lambdas} = this.props;
         return (
             <div>
                 <h3>{`Environment: ${environment.name}`}</h3>
@@ -43,7 +47,7 @@ class Environment extends Component {
                 <hr />
                 <h4>{"Lambdas"}</h4>
                 <Table
-                    collection={environment.services.lambda.lambdas}
+                    collection={values(lambdas)}
                     columns={[
                         "name",
                         {
@@ -52,17 +56,6 @@ class Environment extends Component {
                                 <Icon
                                     icon="edit"
                                     onClick={() => history.push(`/environments/${environment.name}/lambda/${lambda.name}`)}
-                                />
-                            )
-                        },
-                        {
-                            key: "remove",
-                            valueFormatter: (value, lambda) => (
-                                <Icon
-                                    icon="trash"
-                                    onClick={() => {
-                                        this.props.removeLambda(environment, lambda.name);
-                                    }}
                                 />
                             )
                         }
@@ -92,14 +85,18 @@ class Environment extends Component {
 }
 
 function mapStateToProps (state, props) {
+    const filterLambdasByEnvironment = pickBy(
+        propEq("environmentName", props.params.environmentName)
+    );
     return {
-        environment: state.environments.collection[props.params.environmentName]
+        environment: state.environments.collection[props.params.environmentName],
+        lambdas: filterLambdasByEnvironment(state.lambdas.collection)
     };
 }
 function mapDispatchToProps (dispatch) {
     return {
         listEnvironments: bindActionCreators(listEnvironments, dispatch),
-        removeLambda: bindActionCreators(removeLambda, dispatch)
+        listLambdas: bindActionCreators(listLambdas, dispatch)
     };
 }
 export default connect(mapStateToProps, mapDispatchToProps)(Environment);

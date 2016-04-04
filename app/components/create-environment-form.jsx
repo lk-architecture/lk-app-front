@@ -3,8 +3,6 @@ import React, {Component, PropTypes} from "react";
 import {Button, Input} from "react-bootstrap";
 import {reduxForm} from "redux-form";
 
-import AWSRegionSelect from "components/aws-region-select";
-
 function validate (values) {
     return map(value => (
         typeof value === "string" && value.length > 0 ? null : "Required"
@@ -38,11 +36,6 @@ class CreateEnvironmentForm extends Component {
                     type="text"
                     {...fields.name}
                 />
-                <AWSRegionSelect
-                    bsStyle={this.getFieldBsStyle(fields.region)}
-                    help={this.getFieldHelp(fields.region)}
-                    {...fields.region}
-                />
                 <Button type="submit">
                     {"Save"}
                 </Button>
@@ -54,9 +47,6 @@ class CreateEnvironmentForm extends Component {
 
 export default reduxForm({
     form: "settings",
-    fields: [
-        "name",
-        "region"
-    ],
+    fields: ["name"],
     validate: validate
 })(CreateEnvironmentForm);

@@ -1,12 +1,12 @@
 import {applyMiddleware, compose, createStore} from "redux";
 import logger from "redux-logger";
 import {persistStore, autoRehydrate} from "redux-persist";
-import thunk from "redux-thunk";
 
+import safeDispatchThunk from "lib/safe-dispatch-thunk";
 import rootReducer from "reducers";
 
 const middleware = applyMiddleware(
-    thunk,
+    safeDispatchThunk,
     logger({collapsed: true})
 );
 
