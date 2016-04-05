@@ -13,7 +13,7 @@ export function createDeployment (environmentName, lambdaName) {
             dispatch({type: DEPLOYMENT_CREATE_START});
             await axios.post(`${settings.backendEndpoint}/deployments`, {
                 awsRegion: settings.awsRegion,
-                awsAccessKeyId: settings.awsRegion,
+                awsAccessKeyId: settings.awsAccessKeyId,
                 awsSecretAccessKey: settings.awsSecretAccessKey,
                 environmentName: environmentName,
                 lambdaName: lambdaName
