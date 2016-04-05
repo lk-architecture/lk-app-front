@@ -1,7 +1,6 @@
 import * as config from "config";
 import {getDynamodb, getKinesis, getS3} from "lib/aws-services";
 import randomToken from "lib/random-token";
-import store from "lib/store";
 
 export const ENVIRONMENTS_LIST_START = "ENVIRONMENTS_LIST_START";
 export const ENVIRONMENTS_LIST_SUCCESS = "ENVIRONMENTS_LIST_SUCCESS";
@@ -40,7 +39,6 @@ export function createEnvironment (name) {
             const dynamodb = getDynamodb();
             const kinesis = getKinesis();
             const s3 = getS3();
-            const region = store.getState().settings.awsRegion;
             dispatch({
                 type: ENVIRONMENT_CREATE_START,
                 payload: [
@@ -63,7 +61,6 @@ export function createEnvironment (name) {
             });
             const environment = {
                 name: name,
-                region: region,
                 services: {
                     s3: {
                         eventsBucket: `lk-events-${name}-${randomToken()}`

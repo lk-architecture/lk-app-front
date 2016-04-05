@@ -29,7 +29,6 @@ class Environments extends Component {
                     collection={values(environments.collection)}
                     columns={[
                         "name",
-                        "region",
                         {
                             key: "edit",
                             valueFormatter: (value, environment) => (

@@ -1,18 +1,16 @@
-import {NODE_ENV} from "config";
 import {SAVE_SETTINGS} from "actions/settings";
 
-export default function settings (state = {}, action) {
-    if (NODE_ENV === "development") {
-        return {
-            awsAccessKeyId: "awsAccessKeyId",
-            awsSecretAccessKey: "awsSecretAccessKey",
-            awsRegion: "us-east-1",
-            backendEndpoint: "http://localhost:3000",
-            dynamodbEndpoint: "http://localhost:8000",
-            kinesisEndpoint: "http://localhost:4567",
-            s3Endpoint: "http://localhost:4568"
-        };
-    }
+const defaultSettings = {
+    awsAccessKeyId: "awsAccessKeyId",
+    awsSecretAccessKey: "awsSecretAccessKey",
+    awsRegion: "us-east-1",
+    backendEndpoint: "http://localhost:3000",
+    dynamodbEndpoint: "http://localhost:8000",
+    kinesisEndpoint: "http://localhost:4567",
+    s3Endpoint: "http://localhost:4568"
+};
+
+export default function settings (state = defaultSettings, action) {
     const {type, payload} = action;
     switch (type) {
     case SAVE_SETTINGS:
