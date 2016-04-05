@@ -55,4 +55,32 @@ export default async function setupDynamodb () {
         TableName: "lk-lambdas"
     });
     console.log("Created lk-lambdas table");
+    await dynamodb.createTableAsync({
+        AttributeDefinitions: [
+            {
+                AttributeName: "environmentName",
+                AttributeType: "S"
+            },
+            {
+                AttributeName: "id",
+                AttributeType: "S"
+            }
+        ],
+        KeySchema: [
+            {
+                AttributeName: "environmentName",
+                KeyType: "HASH"
+            },
+            {
+                AttributeName: "id",
+                KeyType: "RANGE"
+            }
+        ],
+        ProvisionedThroughput: {
+            ReadCapacityUnits: 10,
+            WriteCapacityUnits: 10
+        },
+        TableName: "lk-deployments"
+    });
+    console.log("Created lk-deployments table");
 }

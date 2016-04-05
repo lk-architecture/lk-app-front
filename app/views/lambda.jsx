@@ -1,9 +1,11 @@
 import {find} from "lodash";
 import React, {Component, PropTypes} from "react";
+import {Button} from "react-bootstrap";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 
 import {listEnvironments} from "actions/environments";
+import {createDeployment} from "actions/deployments";
 import {listLambdas, upsertLambda} from "actions/lambdas";
 import UpsertLambdaForm from "components/upsert-lambda-form";
 import * as AppPropTypes from "lib/app-prop-types";
@@ -11,6 +13,7 @@ import * as AppPropTypes from "lib/app-prop-types";
 class Lambda extends Component {
 
     static propTypes = {
+        createDeployment: PropTypes.func.isRequired,
         environmentName: PropTypes.string.isRequired,
         lambda: AppPropTypes.lambda,
         listEnvironments: PropTypes.func.isRequired,
@@ -27,6 +30,11 @@ class Lambda extends Component {
         this.props.upsertLambda(this.props.environmentName, lambdaConfiguration);
     }
 
+    deploy () {
+        const {createDeployment, environmentName, lambda} = this.props;
+        createDeployment(environmentName, lambda.name);
+    }
+
     render () {
         const {lambda} = this.props;
         return lambda ? (
@@ -41,6 +49,10 @@ class Lambda extends Component {
                     }}
                     onSubmit={::this.handleSubmit}
                 />
+                <h3>{"Deployment"}</h3>
+                <Button onClick={::this.deploy}>
+                    {"Deploy"}
+                </Button>
             </div>
         ) : null;
     }
@@ -58,6 +70,7 @@ function mapStateToProps (state, props) {
 }
 function mapDispatchToProps (dispatch) {
     return {
+        createDeployment: bindActionCreators(createDeployment, dispatch),
         listEnvironments: bindActionCreators(listEnvironments, dispatch),
         listLambdas: bindActionCreators(listLambdas, dispatch),
         upsertLambda: bindActionCreators(upsertLambda, dispatch)

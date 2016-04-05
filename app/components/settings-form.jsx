@@ -48,6 +48,14 @@ class SettingsForm extends Component {
                     help={fields.awsRegion.error}
                     {...fields.awsRegion}
                 />
+                <Input
+                    bsStyle={this.getFieldBsStyle(fields.backendEndpoint)}
+                    help={fields.backendEndpoint.error}
+                    label="Backend endpoint"
+                    placeholder="https://api.lk-architecture.org"
+                    type="text"
+                    {...fields.backendEndpoint}
+                />
                 <CollapsibleParagraph title="Advanced">
                     <Input
                         bsStyle={this.getFieldBsStyle(fields.dynamodbEndpoint)}
@@ -89,6 +97,7 @@ export default reduxForm({
         "awsAccessKeyId",
         "awsSecretAccessKey",
         "awsRegion",
+        "backendEndpoint",
         "dynamodbEndpoint",
         "kinesisEndpoint",
         "s3Endpoint"
