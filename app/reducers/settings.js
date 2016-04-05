@@ -6,7 +6,7 @@ export default function settings (state = {}, action) {
         return {
             awsAccessKeyId: "awsAccessKeyId",
             awsSecretAccessKey: "awsSecretAccessKey",
-            awsRegion: "us-west-1",
+            awsRegion: "us-east-1",
             backendEndpoint: "http://localhost:3000",
             dynamodbEndpoint: "http://localhost:8000",
             kinesisEndpoint: "http://localhost:4567",

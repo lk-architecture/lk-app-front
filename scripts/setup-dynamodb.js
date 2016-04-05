@@ -4,7 +4,7 @@ import {DynamoDB} from "aws-sdk";
 const dynamodb = new DynamoDB({
     apiVersion: "2012-08-10",
     endpoint: "http://localhost:8000",
-    region: "us-west-1",
+    region: "us-east-1",
     accessKeyId: "accessKeyId",
     secretAccessKey: "secretAccessKey"
 });

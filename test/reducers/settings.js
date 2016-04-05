@@ -10,7 +10,7 @@
 //         const actionPayload = {
 //             awsAccessKeyId: "awsAccessKeyId",
 //             awsSecretAccessKey: "awsSecretAccessKey",
-//             awsRegion: "us-west-1",
+//             awsRegion: "us-east-1",
 //             dynamodbEndpoint: "http://localhost:8000",
 //             kinesisEndpoint: "http://localhost:4567",
 //             s3Endpoint: "http://localhost:4568"
@@ -26,7 +26,7 @@
 //         expect(store).to.deep.equal({
 //             awsAccessKeyId: "awsAccessKeyId",
 //             awsSecretAccessKey: "awsSecretAccessKey",
-//             awsRegion: "us-west-1",
+//             awsRegion: "us-east-1",
 //             dynamodbEndpoint: "http://localhost:8000",
 //             kinesisEndpoint: "http://localhost:4567",
 //             s3Endpoint: "http://localhost:4568"
