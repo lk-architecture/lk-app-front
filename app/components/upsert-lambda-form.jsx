@@ -11,18 +11,11 @@ function validate (values) {
     }, values);
 }
 
-class CreateLambaForm extends Component {
+class UpsertLambdaForm extends Component {
 
     static propTypes = {
         fields: PropTypes.object.isRequired,
         handleSubmit: PropTypes.func.isRequired
-    }
-
-    constructor () {
-        super();
-        this.state = {
-            kvPair: []
-        };
     }
 
     getFieldBsStyle (field) {
@@ -31,12 +24,6 @@ class CreateLambaForm extends Component {
 
     getFieldHelp (field) {
         return (field.touched && field.error);
-    }
-
-    onChangeKeyValuePair (event) {
-        this.setState({
-            kvPair: event
-        });
     }
 
     render () {
@@ -52,20 +39,20 @@ class CreateLambaForm extends Component {
                     {...fields.name}
                 />
                 <Input
-                    bsStyle={this.getFieldBsStyle(fields.gitUrl)}
-                    help={this.getFieldHelp(fields.gitUrl)}
-                    label="Git URL"
-                    placeholder="https://github.com/example/lambda11.git"
+                    bsStyle={this.getFieldBsStyle(fields.githubOrg)}
+                    help={this.getFieldHelp(fields.githubOrg)}
+                    label="Github organization"
+                    placeholder="lk-architecture"
                     type="text"
-                    {...fields.gitUrl}
+                    {...fields.githubOrg}
                 />
                 <Input
-                    bsStyle={this.getFieldBsStyle(fields.gitBranch)}
-                    help={this.getFieldHelp(fields.gitBranch)}
-                    label="Git branch"
-                    placeholder="master"
+                    bsStyle={this.getFieldBsStyle(fields.githubRepo)}
+                    help={this.getFieldHelp(fields.githubRepo)}
+                    label="Github repo"
+                    placeholder="lambda-example"
                     type="text"
-                    {...fields.gitBranch}
+                    {...fields.githubRepo}
                 />
                 <Input
                     bsStyle={this.getFieldBsStyle(fields.role)}
@@ -75,12 +62,10 @@ class CreateLambaForm extends Component {
                     type="text"
                     {...fields.role}
                 />
-                <p>{"Environment variables"}</p>
+                <label>{"Environment variables"}</label>
                 <KVInput
                     bsStyle={this.getFieldBsStyle(fields.environmentVariables)}
                     help={this.getFieldHelp(fields.environmentVariables)}
-                    onChange={::this.onChangeKeyValuePair}
-                    value={this.state.kvPair}
                     {...fields.environmentVariables}
                 />
                 <hr />
@@ -97,10 +82,10 @@ export default reduxForm({
     form: "lambda",
     fields: [
         "name",
-        "gitUrl",
-        "gitBranch",
+        "githubOrg",
+        "githubRepo",
         "role",
         "environmentVariables"
     ],
     validate: validate
-})(CreateLambaForm);
+})(UpsertLambdaForm);

@@ -15,7 +15,7 @@ class Environment extends Component {
 
     static propTypes = {
         environment: AppPropTypes.environment,
-        lambdas: PropTypes.any,
+        lambdas: PropTypes.objectOf(AppPropTypes.lambda),
         listEnvironments: PropTypes.func.isRequired,
         listLambdas: PropTypes.func.isRequired
     }
@@ -42,7 +42,6 @@ class Environment extends Component {
                 <p>{`Number of shards: ${environment.services.kinesis.shardsNumber}`}</p>
                 <hr />
                 <h4>{"S3"}</h4>
-                <p>{`Lambda builds bucket: ${environment.services.s3.lambdasBucket}`}</p>
                 <p>{`Events bucket: ${environment.services.s3.eventsBucket}`}</p>
                 <hr />
                 <h4>{"Lambdas"}</h4>

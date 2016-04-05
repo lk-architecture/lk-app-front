@@ -18,31 +18,29 @@ export const kvPairList = PropTypes.arrayOf(kvPair);
 export const lambda = PropTypes.shape({
     id: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
-    defaultConfiguration: PropTypes.shape({
-        environment: kvPairList.isRequired,
-        git: PropTypes.shape({
-            url: PropTypes.string.isRequired,
-            branch: PropTypes.string.isRequired
-        }).isRequired,
-        role: PropTypes.string.isRequired
-    }).isRequired
+    environmentVariables: kvPairList.isRequired,
+    github: PropTypes.shape({
+        org: PropTypes.string.isRequired,
+        repo: PropTypes.string.isRequired
+    }).isRequired,
+    role: PropTypes.string.isRequired
 });
-export const lambdaList = PropTypes.arrayOf(lambda);
+export const lambdas = PropTypes.shape({
+    fetching: PropTypes.bool.isRequired,
+    fetchingError: PropTypes.instanceOf(Error),
+    collection: PropTypes.objectOf(lambda).isRequired
+});
 
 export const environment = PropTypes.shape({
     id: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
     services: PropTypes.shape({
         s3: PropTypes.shape({
-            eventsBucket: PropTypes.string.isRequired,
-            lambdasBucket: PropTypes.string.isRequired
+            eventsBucket: PropTypes.string.isRequired
         }),
         kinesis: PropTypes.shape({
             streamName: PropTypes.string.isRequired,
             shardsNumber: PropTypes.number.isRequired
-        }).isRequired,
-        lambda: PropTypes.shape({
-            lambdas: lambdaList.isRequired
         }).isRequired
     }).isRequired
 });

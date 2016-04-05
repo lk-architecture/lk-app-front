@@ -5,13 +5,14 @@ import {bindActionCreators} from "redux";
 
 import {listEnvironments} from "actions/environments";
 import {listLambdas, upsertLambda} from "actions/lambdas";
-import CreateLambaForm from "components/create-lamba-form";
+import UpsertLambdaForm from "components/upsert-lambda-form";
+import * as AppPropTypes from "lib/app-prop-types";
 
 class Lambda extends Component {
 
     static propTypes = {
         environmentName: PropTypes.string.isRequired,
-        lambda: PropTypes.any,
+        lambda: AppPropTypes.lambda,
         listEnvironments: PropTypes.func.isRequired,
         listLambdas: PropTypes.func.isRequired,
         upsertLambda: PropTypes.func.isRequired
@@ -30,13 +31,13 @@ class Lambda extends Component {
         const {lambda} = this.props;
         return lambda ? (
             <div>
-                <CreateLambaForm
+                <UpsertLambdaForm
                     initialValues={{
                         name: lambda.name,
-                        gitUrl: lambda.defaultConfiguration.git.url,
-                        gitBranch: lambda.defaultConfiguration.git.branch,
-                        environmentVariables: lambda.defaultConfiguration.environmentVariables,
-                        role: lambda.defaultConfiguration.role
+                        githubOrg: lambda.github.org,
+                        githubRepo: lambda.github.repo,
+                        environmentVariables: lambda.environmentVariables,
+                        role: lambda.role
                     }}
                     onSubmit={::this.handleSubmit}
                 />

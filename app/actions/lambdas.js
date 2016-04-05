@@ -39,14 +39,12 @@ export function upsertLambda (environmentName, lambdaConfiguration) {
             const lambda = {
                 name: lambdaConfiguration.name,
                 environmentName: environmentName,
-                defaultConfiguration: {
-                    environmentVariables: lambdaConfiguration.environmentVariables,
-                    git: {
-                        url: lambdaConfiguration.gitUrl,
-                        branch: lambdaConfiguration.gitBranch
-                    },
-                    role: lambdaConfiguration.role
-                }
+                environmentVariables: lambdaConfiguration.environmentVariables,
+                github: {
+                    org: lambdaConfiguration.githubOrg,
+                    repo: lambdaConfiguration.githubRepo
+                },
+                role: lambdaConfiguration.role
             };
             dispatch({type: LAMBDA_UPSERT_START});
             await dynamodb.putAsync({

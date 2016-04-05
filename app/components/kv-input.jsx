@@ -17,6 +17,10 @@ export default class KVInput extends Component {
         value: AppPropTypes.kvPairList
     }
 
+    static defaultProps = {
+        value: []
+    }
+
     handleChangeForEntry (index) {
         return kvPair => {
             const {onChange, value} = this.props;

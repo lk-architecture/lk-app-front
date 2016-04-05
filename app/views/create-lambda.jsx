@@ -2,14 +2,13 @@ import React, {Component, PropTypes} from "react";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 
-import CreateLambaForm from "components/create-lamba-form";
+import UpsertLambdaForm from "components/upsert-lambda-form";
 import {upsertLambda} from "actions/lambdas";
 
 class CreateLambda extends Component {
 
     static propTypes = {
         environmentName: PropTypes.string,
-        lambda: PropTypes.string,
         upsertLambda: PropTypes.func.isRequired
     }
 
@@ -19,7 +18,7 @@ class CreateLambda extends Component {
 
     render () {
         return (
-            <CreateLambaForm onSubmit={::this.handleSubmit} />
+            <UpsertLambdaForm onSubmit={::this.handleSubmit} />
         );
     }
 }

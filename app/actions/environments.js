@@ -51,16 +51,11 @@ export function createEnvironment (name) {
                     },
                     {
                         id: 1,
-                        label: "Create lambdas S3 bucket",
-                        completed: false
-                    },
-                    {
-                        id: 2,
                         label: "Create kinesis stream",
                         completed: false
                     },
                     {
-                        id: 3,
+                        id: 2,
                         label: "Save environment to DynamoDB",
                         completed: false
                     }
@@ -71,15 +66,11 @@ export function createEnvironment (name) {
                 region: region,
                 services: {
                     s3: {
-                        eventsBucket: `lk-events-${name}-${randomToken()}`,
-                        lambdasBucket: `lk-lambdas-${name}-${randomToken()}`
+                        eventsBucket: `lk-events-${name}-${randomToken()}`
                     },
                     kinesis: {
                         streamName: `lk-${name}`,
                         shardsNumber: 1
-                    },
-                    lambda: {
-                        lambdas: []
                     }
                 }
             };
@@ -90,20 +81,13 @@ export function createEnvironment (name) {
                 type: ENVIRONMENT_CREATE_PROGRESS,
                 payload: 0
             });
-            await s3.createBucketAsync({
-                Bucket: environment.services.s3.lambdasBucket
-            });
-            dispatch({
-                type: ENVIRONMENT_CREATE_PROGRESS,
-                payload: 1
-            });
             await kinesis.createStreamAsync({
                 ShardCount: 1,
                 StreamName: environment.services.kinesis.streamName
             });
             dispatch({
                 type: ENVIRONMENT_CREATE_PROGRESS,
-                payload: 2
+                payload: 1
             });
             await dynamodb.putAsync({
                 TableName: config.DYNAMODB_ENVIRONMENTS_TABLE,
@@ -111,7 +95,7 @@ export function createEnvironment (name) {
             });
             dispatch({
                 type: ENVIRONMENT_CREATE_PROGRESS,
-                payload: 3
+                payload: 2
             });
             dispatch({
                 type: ENVIRONMENT_CREATE_SUCCESS,
