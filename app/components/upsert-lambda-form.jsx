@@ -14,6 +14,7 @@ function validate (values) {
 class UpsertLambdaForm extends Component {
 
     static propTypes = {
+        disabled: PropTypes.bool,
         fields: PropTypes.object.isRequired,
         handleSubmit: PropTypes.func.isRequired
     }
@@ -69,8 +70,8 @@ class UpsertLambdaForm extends Component {
                     {...fields.environmentVariables}
                 />
                 <hr />
-                <Button type="submit">
-                    {"Save"}
+                <Button disabled={this.props.disabled} type="submit">
+                    {this.props.disabled ? "Saving" : "Save"}
                 </Button>
             </form>
         );

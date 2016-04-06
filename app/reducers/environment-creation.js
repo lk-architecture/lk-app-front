@@ -1,19 +1,37 @@
 import {
     ENVIRONMENT_CREATE_PROGRESS,
-    ENVIRONMENT_CREATE_START
+    ENVIRONMENT_CREATE_START,
+    ENVIRONMENT_CREATE_ERROR
 } from "actions/environments";
 
-export default function environments (state = [], action) {
+const defaultEnvironmentCreation = {
+    completed: true,
+    steps: []
+};
+
+export default function environmentCreation (state = defaultEnvironmentCreation, action) {
     const {type, payload} = action;
     switch (type) {
     case ENVIRONMENT_CREATE_PROGRESS:
-        return state.map((step) => (payload === step.id ? {
-            id: step.id,
-            label: step.label,
-            completed: true
-        } : step));
+        return {
+            ...state,
+            completed: true,
+            steps: state.steps.map((step) => (payload === step.id ? {
+                id: step.id,
+                label: step.label,
+                completed: true
+            } : step))
+        };
     case ENVIRONMENT_CREATE_START:
-        return payload;
+        return {
+            completed: false,
+            steps: payload
+        };
+    case ENVIRONMENT_CREATE_ERROR:
+        return {
+            ...state,
+            completed: true
+        };
     default:
         return state;
     }

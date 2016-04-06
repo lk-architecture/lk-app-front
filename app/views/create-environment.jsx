@@ -21,9 +21,9 @@ class CreateEnvironment extends Component {
     render () {
         return (
             <div>
-                <CreateEnvironmentForm onSubmit={::this.handleSubmit} />
+                <CreateEnvironmentForm disabled={!this.props.environmentCreation.completed} onSubmit={::this.handleSubmit} />
                 <hr />
-                <StepsProgressIndicator steps={this.props.environmentCreation} />
+                <StepsProgressIndicator steps={this.props.environmentCreation.steps} />
             </div>
         );
     }

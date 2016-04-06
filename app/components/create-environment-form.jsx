@@ -12,6 +12,7 @@ function validate (values) {
 class CreateEnvironmentForm extends Component {
 
     static propTypes = {
+        disabled: PropTypes.bool,
         fields: PropTypes.object.isRequired,
         handleSubmit: PropTypes.func.isRequired
     }
@@ -25,7 +26,7 @@ class CreateEnvironmentForm extends Component {
     }
 
     render () {
-        const {fields, handleSubmit} = this.props;
+        const {disabled, fields, handleSubmit} = this.props;
         return (
             <form onSubmit={handleSubmit}>
                 <Input
@@ -36,13 +37,12 @@ class CreateEnvironmentForm extends Component {
                     type="text"
                     {...fields.name}
                 />
-                <Button type="submit">
+                <Button type="submit" disabled={disabled}>
                     {"Save"}
                 </Button>
             </form>
         );
     }
-
 }
 
 export default reduxForm({

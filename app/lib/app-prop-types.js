@@ -56,3 +56,8 @@ export const step = PropTypes.shape({
     completed: PropTypes.bool
 });
 export const stepList = PropTypes.arrayOf(step);
+
+export const environmentCreation = PropTypes.shape({
+    completed: PropTypes.bool,
+    steps: PropTypes.instanceOf(stepList)
+});

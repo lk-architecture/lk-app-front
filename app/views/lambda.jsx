@@ -1,11 +1,12 @@
-import {find} from "lodash";
+import Table from "bootstrap-table-react";
+import {find, values} from "lodash";
 import React, {Component, PropTypes} from "react";
 import {Button} from "react-bootstrap";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 
 import {listEnvironments} from "actions/environments";
-import {createDeployment} from "actions/deployments";
+import {createDeployment, listDeployments} from "actions/deployments";
 import {listLambdas, upsertLambda} from "actions/lambdas";
 import UpsertLambdaForm from "components/upsert-lambda-form";
 import * as AppPropTypes from "lib/app-prop-types";
@@ -14,14 +15,20 @@ class Lambda extends Component {
 
     static propTypes = {
         createDeployment: PropTypes.func.isRequired,
+        deploymentCreation: PropTypes.shape({
+            completed : PropTypes.bool
+        }),
+        deployments: PropTypes.any,
         environmentName: PropTypes.string.isRequired,
         lambda: AppPropTypes.lambda,
+        listDeployments: PropTypes.func.isRequired,
         listEnvironments: PropTypes.func.isRequired,
         listLambdas: PropTypes.func.isRequired,
         upsertLambda: PropTypes.func.isRequired
     }
 
     componentWillMount () {
+        this.props.listDeployments();
         this.props.listEnvironments();
         this.props.listLambdas();
     }
@@ -36,7 +43,10 @@ class Lambda extends Component {
     }
 
     render () {
-        const {lambda} = this.props;
+        const {deploymentCreation, deployments, lambda} = this.props;
+        const deploymentsCollection = values(deployments.collection).filter(value => {
+            return value.lambdaName === lambda.name && value.environmentName === lambda.environmentName;
+        });
         return lambda ? (
             <div>
                 <UpsertLambdaForm
@@ -49,9 +59,23 @@ class Lambda extends Component {
                     }}
                     onSubmit={::this.handleSubmit}
                 />
-                <h3>{"Deployment"}</h3>
-                <Button onClick={::this.deploy}>
-                    {"Deploy"}
+                <h3>{"Deployments"}</h3>
+                <Table
+                    collection={deploymentsCollection}
+                    columns={[
+                        "id",
+                        "awsRegion",
+                        "environmentName",
+                        "timestamp"
+                    ]}
+                    tableOptions={{
+                        hover: true,
+                        responsive: true,
+                        striped: true
+                    }}
+                />
+                <Button disabled={!deploymentCreation.completed} onClick={::this.deploy}>
+                    {deploymentCreation.completed ? "Deploy" : "Deploying"}
                 </Button>
             </div>
         ) : null;
@@ -61,6 +85,8 @@ class Lambda extends Component {
 
 function mapStateToProps (state, props) {
     return {
+        deploymentCreation: state.deploymentCreation,
+        deployments: state.deployments,
         environmentName: props.params.environmentName,
         lambda: find(state.lambdas.collection, lambda => (
             lambda.environmentName === props.params.environmentName &&
@@ -71,6 +97,7 @@ function mapStateToProps (state, props) {
 function mapDispatchToProps (dispatch) {
     return {
         createDeployment: bindActionCreators(createDeployment, dispatch),
+        listDeployments: bindActionCreators(listDeployments, dispatch),
         listEnvironments: bindActionCreators(listEnvironments, dispatch),
         listLambdas: bindActionCreators(listLambdas, dispatch),
         upsertLambda: bindActionCreators(upsertLambda, dispatch)

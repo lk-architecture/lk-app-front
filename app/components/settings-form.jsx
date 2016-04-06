@@ -97,6 +97,7 @@ export default reduxForm({
         "awsAccessKeyId",
         "awsSecretAccessKey",
         "awsRegion",
+        "useLocalServices",
         "backendEndpoint",
         "dynamodbEndpoint",
         "kinesisEndpoint",

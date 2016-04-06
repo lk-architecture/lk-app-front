@@ -59,6 +59,7 @@ class Environment extends Component {
                             )
                         }
                     ]}
+                    onRowClick={(event) => history.push(`/environments/${event.environmentName}/lambda/${event.name}`)}
                     tableOptions={{
                         hover: true,
                         responsive: true,

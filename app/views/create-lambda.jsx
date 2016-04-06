@@ -9,6 +9,10 @@ class CreateLambda extends Component {
 
     static propTypes = {
         environmentName: PropTypes.string,
+        lambdaCreation: PropTypes.shape({
+            completed : PropTypes.bool,
+            error: PropTypes.string
+        }),
         upsertLambda: PropTypes.func.isRequired
     }
 
@@ -18,13 +22,14 @@ class CreateLambda extends Component {
 
     render () {
         return (
-            <UpsertLambdaForm onSubmit={::this.handleSubmit} />
+            <UpsertLambdaForm disabled={!this.props.lambdaCreation.completed} onSubmit={::this.handleSubmit} />
         );
     }
 }
 
 function mapStateToProps (state, props) {
     return {
+        lambdaCreation: state.lambdaCreation,
         environmentName: props.params.environmentName
     };
 }
