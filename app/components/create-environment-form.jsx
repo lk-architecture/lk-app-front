@@ -37,7 +37,7 @@ class CreateEnvironmentForm extends Component {
                     type="text"
                     {...fields.name}
                 />
-                <Button type="submit" disabled={disabled}>
+                <Button disabled={disabled} type="submit">
                     {"Save"}
                 </Button>
             </form>
