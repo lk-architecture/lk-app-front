@@ -1,5 +1,8 @@
+import axios from "axios";
+
 import * as config from "config";
-import {getDynamodb, getKinesis, getS3} from "lib/aws-services";
+import {getDynamodb, getKinesis} from "lib/aws-services";
+import store from "lib/store";
 import randomToken from "lib/random-token";
 
 export const ENVIRONMENTS_LIST_START = "ENVIRONMENTS_LIST_START";
@@ -36,9 +39,9 @@ export const ENVIRONMENT_CREATE_ERROR = "ENVIRONMENT_CREATE_ERROR";
 export function createEnvironment (name) {
     return async dispatch => {
         try {
+            const settings = store.getState().settings;
             const dynamodb = getDynamodb();
             const kinesis = getKinesis();
-            const s3 = getS3();
             dispatch({
                 type: ENVIRONMENT_CREATE_START,
                 payload: [
@@ -71,8 +74,11 @@ export function createEnvironment (name) {
                     }
                 }
             };
-            await s3.createBucketAsync({
-                Bucket: environment.services.s3.eventsBucket
+            await axios.post(`${settings.backendEndpoint}/buckets`, {
+                awsRegion: settings.awsRegion,
+                awsAccessKeyId: settings.awsAccessKeyId,
+                awsSecretAccessKey: settings.awsSecretAccessKey,
+                s3bucketName: environment.services.s3.eventsBucket
             });
             dispatch({
                 type: ENVIRONMENT_CREATE_PROGRESS,

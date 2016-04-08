@@ -11,7 +11,7 @@ class CreateEnvironment extends Component {
 
     static propTypes = {
         createEnvironment: PropTypes.func.isRequired,
-        environmentCreation: AppPropTypes.stepList
+        environmentCreation: AppPropTypes.environmentCreation
     }
 
     handleSubmit ({name}) {
