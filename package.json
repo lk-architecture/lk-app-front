@@ -11,7 +11,9 @@
     "dev": "npm-run-all --parallel dev:*",
     "lint": "sd-builder lint",
     "build": "sd-builder build",
-    "test": "sd-builder test"
+    "test": "sd-builder test",
+    "prestart": "npm run build && babel server --out-dir build",
+    "start": "NODE_PATH=build node build/index.js"
   },
   "repository": {
     "type": "git",
@@ -55,6 +57,7 @@
     "kinesalite": "^1.11.4",
     "lato-font": "^1.1.1",
     "lodash": "^4.7.0",
+    "node-static": "^0.7.7",
     "node-uuid": "^1.4.7",
     "npm-run-all": "^1.6.0",
     "ramda": "^0.20.1",
