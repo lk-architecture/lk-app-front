@@ -10,9 +10,8 @@
     "dev:main": "sd-builder dev",
     "dev": "npm-run-all --parallel dev:*",
     "lint": "sd-builder lint",
-    "build": "sd-builder build",
+    "build": "sd-builder build && babel server --out-dir build",
     "test": "sd-builder test",
-    "prestart": "npm run build && babel server --out-dir build",
     "start": "NODE_PATH=build node build/index.js"
   },
   "repository": {
