@@ -49,6 +49,10 @@ export const environments = PropTypes.shape({
     fetchingError: PropTypes.instanceOf(Error),
     collection: PropTypes.objectOf(environment).isRequired
 });
+export const environmentCreation = PropTypes.shape({
+    completed: PropTypes.bool,
+    steps: PropTypes.arrayOf(step)
+});
 
 export const step = PropTypes.shape({
     id: PropTypes.number,
@@ -57,7 +61,8 @@ export const step = PropTypes.shape({
 });
 export const stepList = PropTypes.arrayOf(step);
 
-export const environmentCreation = PropTypes.shape({
-    completed: PropTypes.bool,
-    steps: PropTypes.arrayOf(step)
+export const creationReporter = PropTypes.shape({
+    completed: PropTypes.bool.isRequired,
+    started: PropTypes.bool.isRequired,
+    error: PropTypes.string
 });

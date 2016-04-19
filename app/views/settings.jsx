@@ -11,7 +11,8 @@ class Settings extends Component {
     static propTypes = {
         hasRehydrated: PropTypes.bool.isRequired,
         saveSettings: PropTypes.func.isRequired,
-        settings: settings.isRequired
+        settings: settings.isRequired,
+        settingsSaved: PropTypes.bool.isRequired
     }
 
     handleSubmit (settings) {
@@ -19,11 +20,12 @@ class Settings extends Component {
     }
 
     renderForm () {
-        const {hasRehydrated, settings} = this.props;
+        const {hasRehydrated, settings, settingsSaved} = this.props;
         return hasRehydrated ? (
             <SettingsForm
                 initialValues={settings}
                 onSubmit={::this.handleSubmit}
+                saved={settingsSaved}
             />
         ) : null;
     }
@@ -44,8 +46,9 @@ class Settings extends Component {
 
 function mapStateToProps (state) {
     return {
+        hasRehydrated: state.hasRehydrated,
         settings: state.settings,
-        hasRehydrated: state.hasRehydrated
+        settingsSaved: state.settingsCreation.completed
     };
 }
 function mapDispatchToProps (dispatch) {

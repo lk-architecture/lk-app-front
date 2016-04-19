@@ -16,7 +16,8 @@ class SettingsForm extends Component {
 
     static propTypes = {
         fields: PropTypes.object.isRequired,
-        handleSubmit: PropTypes.func.isRequired
+        handleSubmit: PropTypes.func.isRequired,
+        saved: PropTypes.bool.isRequired
     }
 
     getFieldBsStyle (field) {
@@ -24,7 +25,7 @@ class SettingsForm extends Component {
     }
 
     render () {
-        const {fields, handleSubmit} = this.props;
+        const {fields, handleSubmit, saved} = this.props;
         return (
             <form onSubmit={handleSubmit}>
                 <Input
@@ -82,8 +83,8 @@ class SettingsForm extends Component {
                         {...fields.s3Endpoint}
                     />
                 </CollapsibleParagraph>
-                <Button type="submit">
-                    {"Save"}
+                <Button bsStyle={saved ? "success" : "default"} type="submit">
+                    {saved ? "Succesfully saved" : "Save"}
                 </Button>
             </form>
         );
