@@ -46,6 +46,8 @@ class Lambda extends Component {
         const {deploymentCreation, deployments, lambda} = this.props;
         const deploymentsCollection = values(deployments.collection).filter(value => {
             return value.lambdaName === lambda.name && value.environmentName === lambda.environmentName;
+        }).sort((a, b) => {
+            return a.timestamp >= b.timestamp ? 1 : -1;
         });
         return lambda ? (
             <div>
