@@ -4,6 +4,7 @@ import React, {Component, PropTypes} from "react";
 import {Button} from "react-bootstrap";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
+import moment from "moment";
 
 import {listEnvironments} from "actions/environments";
 import {createDeployment, listDeployments} from "actions/deployments";
@@ -46,9 +47,7 @@ class Lambda extends Component {
         const {deploymentCreation, deployments, lambda} = this.props;
         const deploymentsCollection = values(deployments.collection).filter(value => {
             return value.lambdaName === lambda.name && value.environmentName === lambda.environmentName;
-        }).sort((a, b) => {
-            return a.timestamp >= b.timestamp ? 1 : -1;
-        });
+        }).sort((a, b) => a.timestamp < b.timestamp);
         return lambda ? (
             <div>
                 <UpsertLambdaForm
@@ -68,7 +67,10 @@ class Lambda extends Component {
                         "id",
                         "awsRegion",
                         "environmentName",
-                        "timestamp"
+                        {
+                            key: "timestamp",
+                            valueFormatter: time => moment(time).format("HH:mm:ss - MMMM Do YYYY")
+                        }
                     ]}
                     tableOptions={{
                         hover: true,
