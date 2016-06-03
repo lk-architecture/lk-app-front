@@ -48,7 +48,7 @@ class Lambda extends Component {
         const deploymentsCollection = values(deployments.collection).filter(value => {
             return value.environmentName === lambda.environmentName && value.lambdaName === lambda.name;
         }).sort((a, b) => {
-            const x = moment.utc(a.tiestamp).valueOf();
+            const x = moment.utc(a.timestamp).valueOf();
             const y = moment.utc(b.timestamp).valueOf();
             return y - x;
         });
