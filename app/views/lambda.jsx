@@ -46,8 +46,12 @@ class Lambda extends Component {
     render () {
         const {deploymentCreation, deployments, lambda} = this.props;
         const deploymentsCollection = values(deployments.collection).filter(value => {
-            return value.lambdaName === lambda.name && value.environmentName === lambda.environmentName;
-        }).sort((a, b) => a.timestamp < b.timestamp);
+            return value.environmentName === lambda.environmentName && value.lambdaName === lambda.name;
+        }).sort((a, b) => {
+            const x = moment.utc(a.tiestamp).valueOf();
+            const y = moment.utc(b.timestamp).valueOf();
+            return y - x;
+        });
         return lambda ? (
             <div>
                 <UpsertLambdaForm
