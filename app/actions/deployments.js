@@ -20,7 +20,16 @@ export function createDeployment (environmentName, lambdaName) {
                 environmentName: environmentName,
                 lambdaName: lambdaName
             });
-            dispatch({type: DEPLOYMENT_CREATE_SUCCESS});
+
+            const dynamodb = getDynamodb();
+            const result = await dynamodb.scanAsync({
+                TableName: config.DYNAMODB_DEPLOYMENTS_TABLE
+            });
+
+            dispatch({
+                type: DEPLOYMENT_CREATE_SUCCESS,
+                payload: result.Items
+            });
         } catch (error) {
             dispatch({
                 type: DEPLOYMENT_CREATE_ERROR,

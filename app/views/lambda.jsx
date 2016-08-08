@@ -1,7 +1,6 @@
 import Table from "bootstrap-table-react";
 import {find, values} from "lodash";
 import React, {Component, PropTypes} from "react";
-import {Button} from "react-bootstrap";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 import moment from "moment";
@@ -11,12 +10,31 @@ import {createDeployment, listDeployments} from "actions/deployments";
 import {listLambdas, upsertLambda} from "actions/lambdas";
 import UpsertLambdaForm from "components/upsert-lambda-form";
 import * as AppPropTypes from "lib/app-prop-types";
+import Icon from "components/icon";
+
+const styles = {
+    header: {
+        position: "relative",
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between"
+    },
+    logo: {
+        cursor: "pointer"
+    },
+    loading: {
+        alignItems: "center",
+        textAlign: "center"
+    }
+};
 
 class Lambda extends Component {
 
     static propTypes = {
         createDeployment: PropTypes.func.isRequired,
-        deploymentCreation: PropTypes.shape({
+        deployment: PropTypes.shape({
             completed : PropTypes.bool
         }),
         deployments: PropTypes.any,
@@ -44,7 +62,7 @@ class Lambda extends Component {
     }
 
     render () {
-        const {deploymentCreation, deployments, lambda} = this.props;
+        const {deployments, lambda} = this.props;
         const deploymentsCollection = values(deployments.collection).filter(value => {
             return value.environmentName === lambda.environmentName && value.lambdaName === lambda.name;
         }).sort((a, b) => {
@@ -52,6 +70,7 @@ class Lambda extends Component {
             const y = moment.utc(b.timestamp).valueOf();
             return y - x;
         });
+
         return lambda ? (
             <div>
                 <UpsertLambdaForm
@@ -64,27 +83,49 @@ class Lambda extends Component {
                     }}
                     onSubmit={::this.handleSubmit}
                 />
-                <h3>{"Deployments"}</h3>
-                <Table
-                    collection={deploymentsCollection}
-                    columns={[
-                        "id",
-                        "awsRegion",
-                        "environmentName",
-                        {
-                            key: "timestamp",
-                            valueFormatter: time => moment(time).format("HH:mm:ss - MMMM Do YYYY")
+
+                <div style={styles.header}>
+                    <div>
+                        <h3>{"Deployments"}</h3>
+                    </div>
+                    <div>
+                        {deployments.creationRunning ? null :
+                            <Icon
+                                icon="cloud-upload"
+                                onClick={::this.deploy}
+                                size="30px"
+                            />
                         }
-                    ]}
-                    tableOptions={{
-                        hover: true,
-                        responsive: true,
-                        striped: true
-                    }}
-                />
-                <Button disabled={!deploymentCreation.completed} onClick={::this.deploy}>
-                    {deploymentCreation.completed ? "Deploy" : "Deploying"}
-                </Button>
+                    </div>
+                </div>
+
+                {deployments.creationRunning ?
+                    <div style={styles.loading}>
+                        <Icon
+                            icon="circle-o-notch"
+                            size="90px"
+                            spin={true}
+                        />
+                    </div>
+                     :
+                    <Table
+                        collection={deploymentsCollection}
+                        columns={[
+                            "id",
+                            "awsRegion",
+                            "environmentName",
+                            {
+                                key: "timestamp",
+                                valueFormatter: time => moment(time).format("HH:mm:ss - MMMM Do YYYY")
+                            }
+                        ]}
+                        tableOptions={{
+                            hover: true,
+                            responsive: true,
+                            striped: true
+                        }}
+                    />
+                }
             </div>
         ) : null;
     }
@@ -93,7 +134,6 @@ class Lambda extends Component {
 
 function mapStateToProps (state, props) {
     return {
-        deploymentCreation: state.deploymentCreation,
         deployments: state.deployments,
         environmentName: props.params.environmentName,
         lambda: find(state.lambdas.collection, lambda => (
