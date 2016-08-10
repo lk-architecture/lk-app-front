@@ -3,16 +3,18 @@ import axios from "axios";
 import * as config from "config";
 import store from "lib/store";
 import {getDynamodb} from "lib/aws-services";
+import {map} from "bluebird";
 
-export const DEPLOYMENT_CREATE_START = "DEPLOYMENT_CREATE_START";
-export const DEPLOYMENT_CREATE_SUCCESS = "DEPLOYMENT_CREATE_SUCCESS";
-export const DEPLOYMENT_CREATE_ERROR = "DEPLOYMENT_CREATE_ERROR";
+export const LAMBDA_UPDATE_START = "LAMBDA_UPDATE_START";
+export const LAMBDA_CREATE_SUCCESS = "LAMBDA_CREATE_SUCCESS";
+export const LAMBDA_DELETE_SUCCESS = "LAMBDA_DELETE_SUCCESS";
+export const LAMBDA_UPDATE_ERROR = "LAMBDA_UPDATE_ERROR";
 
 export function createDeployment (environmentName, lambdaName) {
     const settings = store.getState().settings;
     return async dispatch => {
         try {
-            dispatch({type: DEPLOYMENT_CREATE_START});
+            dispatch({type: LAMBDA_UPDATE_START});
             await axios.post(`${settings.backendEndpoint}/deployments`, {
                 awsRegion: settings.awsRegion,
                 awsAccessKeyId: settings.awsAccessKeyId,
@@ -27,12 +29,40 @@ export function createDeployment (environmentName, lambdaName) {
             });
 
             dispatch({
-                type: DEPLOYMENT_CREATE_SUCCESS,
+                type: LAMBDA_CREATE_SUCCESS,
                 payload: result.Items
             });
         } catch (error) {
             dispatch({
-                type: DEPLOYMENT_CREATE_ERROR,
+                type: LAMBDA_UPDATE_ERROR,
+                payload: error,
+                error: true
+            });
+        }
+    };
+}
+
+export function clearDeploy (environmentName, deploymentsCollection) {
+    return async dispatch => {
+        try {
+            dispatch({type: LAMBDA_UPDATE_START});
+            const dynamodb = getDynamodb();
+            await map(deploymentsCollection, async (element) => {
+                await dynamodb.deleteAsync({
+                    TableName: config.DYNAMODB_DEPLOYMENTS_TABLE,
+                    Key: {
+                        id: element.id,
+                        environmentName: environmentName
+                    }
+                });
+            });
+            dispatch({
+                type: LAMBDA_DELETE_SUCCESS,
+                payload: []
+            });
+        } catch (error) {
+            dispatch({
+                type: LAMBDA_UPDATE_ERROR,
                 payload: error,
                 error: true
             });

@@ -4,9 +4,10 @@ import React, {Component, PropTypes} from "react";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 import moment from "moment";
+import {Alert} from "react-bootstrap";
 
 import {listEnvironments} from "actions/environments";
-import {createDeployment, listDeployments} from "actions/deployments";
+import {createDeployment, listDeployments, clearDeploy} from "actions/deployments";
 import {listLambdas, upsertLambda} from "actions/lambdas";
 import UpsertLambdaForm from "components/upsert-lambda-form";
 import * as AppPropTypes from "lib/app-prop-types";
@@ -27,12 +28,16 @@ const styles = {
     loading: {
         alignItems: "center",
         textAlign: "center"
+    },
+    button: {
+        padding: "5pt"
     }
 };
 
 class Lambda extends Component {
 
     static propTypes = {
+        clearDeploy: PropTypes.func.isRequired,
         createDeployment: PropTypes.func.isRequired,
         deployment: PropTypes.shape({
             completed : PropTypes.bool
@@ -59,6 +64,20 @@ class Lambda extends Component {
     deploy () {
         const {createDeployment, environmentName, lambda} = this.props;
         createDeployment(environmentName, lambda.name);
+    }
+
+    clear () {
+        const {deployments, clearDeploy, environmentName, lambda} = this.props;
+
+        const deploymentsCollection = values(deployments.collection).filter(value => {
+            return value.environmentName === lambda.environmentName && value.lambdaName === lambda.name;
+        }).sort((a, b) => {
+            const x = moment.utc(a.timestamp).valueOf();
+            const y = moment.utc(b.timestamp).valueOf();
+            return y - x;
+        });
+
+        clearDeploy(environmentName, deploymentsCollection);
     }
 
     render () {
@@ -88,15 +107,23 @@ class Lambda extends Component {
                     <div>
                         <h3>{"Deployments"}</h3>
                     </div>
-                    <div>
+
                         {deployments.creationRunning ? null :
-                            <Icon
-                                icon="cloud-upload"
-                                onClick={::this.deploy}
-                                size="30px"
-                            />
+                            <div>
+                                <Icon
+                                    icon="cloud-upload"
+                                    onClick={::this.deploy}
+                                    size="30px"
+                                    style={styles.button}
+                                />
+                                <Icon
+                                    icon="trash"
+                                    onClick={::this.clear}
+                                    size="30px"
+                                    style={styles.button}
+                                />
+                            </div>
                         }
-                    </div>
                 </div>
 
                 {deployments.creationRunning ?
@@ -126,8 +153,14 @@ class Lambda extends Component {
                         }}
                     />
                 }
+                {deployments.error!=null ?
+                    <Alert bsStyle="danger">
+                        <strong>{"Error "}</strong>{deployments.error.toString()}
+                    </Alert>
+                : ""}
             </div>
-        ) : null;
+
+        ): null;
     }
 
 }
@@ -145,6 +178,7 @@ function mapStateToProps (state, props) {
 function mapDispatchToProps (dispatch) {
     return {
         createDeployment: bindActionCreators(createDeployment, dispatch),
+        clearDeploy: bindActionCreators(clearDeploy, dispatch),
         listDeployments: bindActionCreators(listDeployments, dispatch),
         listEnvironments: bindActionCreators(listEnvironments, dispatch),
         listLambdas: bindActionCreators(listLambdas, dispatch),

@@ -2,17 +2,17 @@ import {
     DEPLOYMENTS_LIST_START,
     DEPLOYMENTS_LIST_SUCCESS,
     DEPLOYMENTS_LIST_ERROR,
-    DEPLOYMENT_CREATE_START,
-    DEPLOYMENT_CREATE_ERROR,
-    DEPLOYMENT_CREATE_SUCCESS
+    LAMBDA_UPDATE_START,
+    LAMBDA_UPDATE_ERROR,
+    LAMBDA_CREATE_SUCCESS,
+    LAMBDA_DELETE_SUCCESS
 } from "actions/deployments";
 import {arrayToCollection} from "lib/utils";
 
 const defaultDeployments = {
     fetching: false,
-    fetchingError: null,
     creationRunning: false,
-    creationError: null,
+    error: null,
     collection: {}
 };
 
@@ -26,6 +26,7 @@ export default function deployments (state = defaultDeployments, action) {
     case DEPLOYMENTS_LIST_START:
         return {
             ...state,
+            error: null,
             fetching: true
         };
     case DEPLOYMENTS_LIST_SUCCESS:
@@ -40,19 +41,21 @@ export default function deployments (state = defaultDeployments, action) {
         return {
             ...state,
             fetching: false,
-            fetchingError: payload
+            error: payload
         };
-    case DEPLOYMENT_CREATE_START:
+    case LAMBDA_UPDATE_START:
         return {
             ...state,
+            error: null,
             creationRunning: true
         };
-    case DEPLOYMENT_CREATE_ERROR:
+    case LAMBDA_UPDATE_ERROR:
         return {
             ...state,
-            creationError: payload
+            creationRunning: false,
+            error: payload
         };
-    case DEPLOYMENT_CREATE_SUCCESS:
+    case LAMBDA_CREATE_SUCCESS:
         return {
             ...state,
             creationRunning: false,
@@ -60,6 +63,12 @@ export default function deployments (state = defaultDeployments, action) {
                 ...state.collection,
                 ...arrayToCollection(getDeplyomentId, payload)
             }
+        };
+    case LAMBDA_DELETE_SUCCESS:
+        return {
+            ...state,
+            creationRunning: false,
+            collection: {}
         };
     default:
         return state;
