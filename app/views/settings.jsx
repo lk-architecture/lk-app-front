@@ -1,10 +1,12 @@
 import React, {Component, PropTypes} from "react";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
+import {Breadcrumb} from "react-bootstrap";
 
 import {saveSettings} from "actions/settings";
 import SettingsForm from "components/settings-form";
 import {settings} from "lib/app-prop-types";
+import history from "lib/history";
 
 class Settings extends Component {
 
@@ -33,11 +35,23 @@ class Settings extends Component {
     render () {
         return (
             <div>
-                <h2>
-                    {"Settings"}
-                </h2>
-                <hr />
-                {this.renderForm()}
+                <div>
+                    <Breadcrumb>
+                        <Breadcrumb.Item onClick={() => history.push("/")}>
+                            {"Home"}
+                        </Breadcrumb.Item>
+                        <Breadcrumb.Item active={true}>
+                          {"Settings"}
+                        </Breadcrumb.Item>
+                    </Breadcrumb>
+                </div>
+                <div>
+                    <h2>
+                        {"Settings"}
+                    </h2>
+                    <hr />
+                    {this.renderForm()}
+                </div>
             </div>
         );
     }

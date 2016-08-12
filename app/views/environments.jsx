@@ -1,7 +1,7 @@
 import Table from "bootstrap-table-react";
 import {values} from "ramda";
 import React, {Component, PropTypes} from "react";
-import {Button} from "react-bootstrap";
+import {Button, Breadcrumb} from "react-bootstrap";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 
@@ -23,32 +23,44 @@ class Environments extends Component {
 
     render () {
         const {environments} = this.props;
+
         return (
             <div>
-                <Table
-                    collection={values(environments.collection)}
-                    columns={[
-                        "name",
-                        {
-                            key: "edit",
-                            valueFormatter: (value, environment) => (
-                                <Icon
-                                    icon="edit"
-                                    onClick={() => history.push(`/environments/${environment.name}`)}
-                                />
-                            )
-                        }
-                    ]}
-                    onRowClick={(event) => history.push(`/environments/${event.name}`)}
-                    tableOptions={{
-                        hover: true,
-                        responsive: true,
-                        striped: true
-                    }}
-                />
-                <Button block={true} onClick={() => history.push("/environments/new")}>
-                    {"Create environment"}
-                </Button>
+                <div>
+                    <Breadcrumb>
+                        <Breadcrumb.Item active={true}>
+                          {"Home"}
+                        </Breadcrumb.Item>
+                    </Breadcrumb>
+                </div>
+                <div>
+                    <Table
+                        collection={values(environments.collection)}
+                        columns={[
+                            {
+                                key:"name"
+                            },
+                            {
+                                key: "edit",
+                                valueFormatter: (value, environment) => (
+                                    <Icon
+                                        icon="edit"
+                                        onClick={() => history.push(`/environments/${environment.name}`)}
+                                    />
+                                )
+                            }
+                        ]}
+                        onRowClick={(event) => history.push(`/environments/${event.name}`)}
+                        tableOptions={{
+                            hover: true,
+                            responsive: true,
+                            striped: true
+                        }}
+                    />
+                    <Button block={true} onClick={() => history.push("/environments/new")}>
+                        {"Create environment"}
+                    </Button>
+                </div>
             </div>
         );
     }

@@ -1,9 +1,11 @@
 import React, {Component, PropTypes} from "react";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
+import {Breadcrumb} from "react-bootstrap";
 
 import UpsertLambdaForm from "components/upsert-lambda-form";
 import {upsertLambda} from "actions/lambdas";
+import history from "lib/history";
 
 class CreateLambda extends Component {
 
@@ -22,7 +24,24 @@ class CreateLambda extends Component {
 
     render () {
         return (
-            <UpsertLambdaForm disabled={!this.props.lambdaCreation.completed} onSubmit={::this.handleSubmit} />
+            <div>
+                <div>
+                    <Breadcrumb>
+                        <Breadcrumb.Item onClick={() => history.push("/")}>
+                            {"Home"}
+                        </Breadcrumb.Item>
+                        <Breadcrumb.Item onClick={() => history.push(`/environments/${this.props.environmentName}`)}>
+                            {this.props.environmentName}
+                        </Breadcrumb.Item>
+                        <Breadcrumb.Item active={true}>
+                          {"Add Lambda"}
+                        </Breadcrumb.Item>
+                    </Breadcrumb>
+                </div>
+                <div>
+                    <UpsertLambdaForm disabled={!this.props.lambdaCreation.completed} onSubmit={::this.handleSubmit} />
+                </div>
+            </div>
         );
     }
 }

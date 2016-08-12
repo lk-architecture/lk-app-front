@@ -4,7 +4,7 @@ import React, {Component, PropTypes} from "react";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 import moment from "moment";
-import {Alert} from "react-bootstrap";
+import {Alert, Breadcrumb} from "react-bootstrap";
 
 import {listEnvironments} from "actions/environments";
 import {createDeployment, listDeployments, clearDeploy} from "actions/deployments";
@@ -12,6 +12,7 @@ import {listLambdas, upsertLambda} from "actions/lambdas";
 import UpsertLambdaForm from "components/upsert-lambda-form";
 import * as AppPropTypes from "lib/app-prop-types";
 import Icon from "components/icon";
+import history from "lib/history";
 
 const styles = {
     header: {
@@ -92,72 +93,87 @@ class Lambda extends Component {
 
         return lambda ? (
             <div>
-                <UpsertLambdaForm
-                    initialValues={{
-                        name: lambda.name,
-                        githubOrg: lambda.github.org,
-                        githubRepo: lambda.github.repo,
-                        environmentVariables: lambda.environmentVariables,
-                        role: lambda.role
-                    }}
-                    onSubmit={::this.handleSubmit}
-                />
-
-                <div style={styles.header}>
-                    <div>
-                        <h3>{"Deployments"}</h3>
-                    </div>
-
-                        {deployments.creationRunning ? null :
-                            <div>
-                                <Icon
-                                    icon="cloud-upload"
-                                    onClick={::this.deploy}
-                                    size="30px"
-                                    style={styles.button}
-                                />
-                                <Icon
-                                    icon="trash"
-                                    onClick={::this.clear}
-                                    size="30px"
-                                    style={styles.button}
-                                />
-                            </div>
-                        }
+                <div>
+                    <Breadcrumb>
+                        <Breadcrumb.Item onClick={() => history.push("/")}>
+                            {"Home"}
+                        </Breadcrumb.Item>
+                        <Breadcrumb.Item onClick={() => history.push(`/environments/${this.props.environmentName}`)}>
+                            {this.props.environmentName}
+                        </Breadcrumb.Item>
+                        <Breadcrumb.Item active={true}>
+                          {lambda.name}
+                        </Breadcrumb.Item>
+                    </Breadcrumb>
                 </div>
-
-                {deployments.creationRunning ?
-                    <div style={styles.loading}>
-                        <Icon
-                            icon="circle-o-notch"
-                            size="90px"
-                            spin={true}
-                        />
-                    </div>
-                     :
-                    <Table
-                        collection={deploymentsCollection}
-                        columns={[
-                            "id",
-                            "awsRegion",
-                            "environmentName",
-                            {
-                                key: "timestamp",
-                                valueFormatter: time => moment(time).format("HH:mm:ss - MMMM Do YYYY")
-                            }
-                        ]}
-                        tableOptions={{
-                            hover: true,
-                            responsive: true,
-                            striped: true
+                <div>
+                    <UpsertLambdaForm
+                        initialValues={{
+                            name: lambda.name,
+                            githubOrg: lambda.github.org,
+                            githubRepo: lambda.github.repo,
+                            environmentVariables: lambda.environmentVariables,
+                            role: lambda.role
                         }}
+                        onSubmit={::this.handleSubmit}
                     />
-                }
-                {deployments.error!=null ?
-                    <Alert bsStyle="danger">
-                        <strong>{"Error "}</strong>{deployments.error.toString()}
-                    </Alert>
-                : ""}
+
+                    <div style={styles.header}>
+                        <div>
+                            <h3>{"Deployments"}</h3>
+                        </div>
+
+                            {deployments.creationRunning ? null :
+                                <div>
+                                    <Icon
+                                        icon="cloud-upload"
+                                        onClick={::this.deploy}
+                                        size="30px"
+                                        style={styles.button}
+                                    />
+                                    <Icon
+                                        icon="trash"
+                                        onClick={::this.clear}
+                                        size="30px"
+                                        style={styles.button}
+                                    />
+                                </div>
+                            }
+                    </div>
+
+                    {deployments.creationRunning ?
+                        <div style={styles.loading}>
+                            <Icon
+                                icon="circle-o-notch"
+                                size="90px"
+                                spin={true}
+                            />
+                        </div>
+                         :
+                        <Table
+                            collection={deploymentsCollection}
+                            columns={[
+                                "id",
+                                "awsRegion",
+                                "environmentName",
+                                {
+                                    key: "timestamp",
+                                    valueFormatter: time => moment(time).format("HH:mm:ss - MMMM Do YYYY")
+                                }
+                            ]}
+                            tableOptions={{
+                                hover: true,
+                                responsive: true,
+                                striped: true
+                            }}
+                        />
+                    }
+                    {deployments.error!=null ?
+                        <Alert bsStyle="danger">
+                            <strong>{"Error "}</strong>{deployments.error.toString()}
+                        </Alert>
+                    : ""}
+                </div>
             </div>
 
         ): null;

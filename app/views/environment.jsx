@@ -1,7 +1,7 @@
 import Table from "bootstrap-table-react";
 import {pickBy, propEq, values} from "ramda";
 import React, {Component, PropTypes} from "react";
-import {Button} from "react-bootstrap";
+import {Button, Breadcrumb} from "react-bootstrap";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 
@@ -10,6 +10,7 @@ import * as AppPropTypes from "lib/app-prop-types";
 import history from "lib/history";
 import {listEnvironments} from "actions/environments";
 import {listLambdas} from "actions/lambdas";
+
 
 class Environment extends Component {
 
@@ -35,43 +36,55 @@ class Environment extends Component {
         const {environment, lambdas} = this.props;
         return (
             <div>
-                <h3>{`Environment: ${environment.name}`}</h3>
-                <hr />
-                <h4>{"Kinesis"}</h4>
-                <p>{`Stream name: ${environment.services.kinesis.streamName}`}</p>
-                <p>{`Number of shards: ${environment.services.kinesis.shardsNumber}`}</p>
-                <hr />
-                <h4>{"S3"}</h4>
-                <p>{`Events bucket: ${environment.services.s3.eventsBucket}`}</p>
-                <hr />
-                <h4>{"Lambdas"}</h4>
-                <Table
-                    collection={values(lambdas)}
-                    columns={[
-                        "name",
-                        {
-                            key: "edit",
-                            valueFormatter: (value, lambda) => (
-                                <Icon
-                                    icon="edit"
-                                    onClick={() => history.push(`/environments/${environment.name}/lambda/${lambda.name}`)}
-                                />
-                            )
-                        }
-                    ]}
-                    onRowClick={(event) => history.push(`/environments/${event.environmentName}/lambda/${event.name}`)}
-                    tableOptions={{
-                        hover: true,
-                        responsive: true,
-                        striped: true
-                    }}
-                />
-                <Button
-                    block={true}
-                    onClick={() => history.push(`/environments/${environment.name}/lambda/new`)}
-                >
-                    {"Add lambda"}
-                </Button>
+                <div>
+                    <Breadcrumb>
+                        <Breadcrumb.Item onClick={() => history.push("/")}>
+                            {"Home"}
+                        </Breadcrumb.Item>
+                        <Breadcrumb.Item active={true}>
+                          {environment.name}
+                        </Breadcrumb.Item>
+                    </Breadcrumb>
+                </div>
+                <div>
+                    <h3>{`Environment: ${environment.name}`}</h3>
+                    <hr />
+                    <h4>{"Kinesis"}</h4>
+                    <p>{`Stream name: ${environment.services.kinesis.streamName}`}</p>
+                    <p>{`Number of shards: ${environment.services.kinesis.shardsNumber}`}</p>
+                    <hr />
+                    <h4>{"S3"}</h4>
+                    <p>{`Events bucket: ${environment.services.s3.eventsBucket}`}</p>
+                    <hr />
+                    <h4>{"Lambdas"}</h4>
+                    <Table
+                        collection={values(lambdas)}
+                        columns={[
+                            "name",
+                            {
+                                key: "edit",
+                                valueFormatter: (value, lambda) => (
+                                    <Icon
+                                        icon="edit"
+                                        onClick={() => history.push(`/environments/${environment.name}/lambda/${lambda.name}`)}
+                                    />
+                                )
+                            }
+                        ]}
+                        onRowClick={(event) => history.push(`/environments/${event.environmentName}/lambda/${event.name}`)}
+                        tableOptions={{
+                            hover: true,
+                            responsive: true,
+                            striped: true
+                        }}
+                    />
+                    <Button
+                        block={true}
+                        onClick={() => history.push(`/environments/${environment.name}/lambda/new`)}
+                    >
+                        {"Add lambda"}
+                    </Button>
+                </div>
             </div>
         );
     }
