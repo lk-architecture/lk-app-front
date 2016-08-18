@@ -23,6 +23,7 @@ class Environments extends Component {
 
     render () {
         const {environments} = this.props;
+        const collection = values(environments.collection);
 
         return (
             <div>
@@ -35,7 +36,7 @@ class Environments extends Component {
                 </div>
                 <div>
                     <Table
-                        collection={values(environments.collection)}
+                        collection={collection.sort((a, b) => a.name > b.name)}
                         columns={[
                             {
                                 key:"name"
