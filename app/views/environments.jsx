@@ -36,7 +36,7 @@ class Environments extends Component {
                 </div>
                 <div>
                     <Table
-                        collection={collection.sort((a, b) => a.name > b.name)}
+                        collection={collection.sort((a, b) => a.name > b.name ? 1 : -1)}
                         columns={[
                             {
                                 key:"name"
