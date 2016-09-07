@@ -4,26 +4,46 @@ import React, {Component, PropTypes} from "react";
 import {Button, Breadcrumb} from "react-bootstrap";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
+import moment from "moment";
 
 import Icon from "components/icon";
 import * as AppPropTypes from "lib/app-prop-types";
 import history from "lib/history";
 import {listEnvironments} from "actions/environments";
+import {listDeployments} from "actions/deployments";
 import {listLambdas} from "actions/lambdas";
 
 
 class Environment extends Component {
 
     static propTypes = {
+        deployments: PropTypes.any,
         environment: AppPropTypes.environment,
+        lambda: AppPropTypes.lambda,
         lambdas: PropTypes.objectOf(AppPropTypes.lambda),
+        listDeployments: PropTypes.func.isRequired,
         listEnvironments: PropTypes.func.isRequired,
         listLambdas: PropTypes.func.isRequired
     }
 
     componentWillMount () {
         this.props.listEnvironments();
+        this.props.listDeployments();
         this.props.listLambdas();
+    }
+
+    lastDate (deployments, lambda) {
+        const last = values(deployments).filter(value => {
+            return value.lambdaName === lambda;
+        }).sort((a, b) => {
+            const x = moment.utc(a.timestamp).valueOf();
+            const y = moment.utc(b.timestamp).valueOf();
+            return y - x;
+        })[0];
+        if (last) {
+            return moment(last.timestamp).fromNow();
+        }
+        return "";
     }
 
     renderNotFound () {
@@ -33,7 +53,24 @@ class Environment extends Component {
     }
 
     renderPage () {
-        const {environment, lambdas} = this.props;
+        const {environment, lambdas, deployments} = this.props;
+        moment.updateLocale("en", {
+            relativeTime : {
+                future: "in %s",
+                past:   "%s",
+                s:  "seconds ago",
+                m:  "a minute ago",
+                mm: "%d minutes ago",
+                h:  "an hour ago",
+                hh: "%d hours ago",
+                d:  "a day ago",
+                dd: "%d days ago",
+                M:  "a month ago",
+                MM: "A long time ago in a galaxy far, far away…",
+                y:  "A long time ago in a galaxy far, far away…",
+                yy: "A long time ago in a galaxy far, far away…"
+            }
+        });
         return (
             <div>
                 <div>
@@ -61,6 +98,10 @@ class Environment extends Component {
                         collection={values(lambdas)}
                         columns={[
                             "name",
+                            {
+                                key: "when",
+                                valueFormatter: (value, lambda) => (this.lastDate(deployments, lambda.name))
+                            },
                             {
                                 key: "edit",
                                 valueFormatter: (value, lambda) => (
@@ -102,14 +143,20 @@ function mapStateToProps (state, props) {
         propEq("environmentName", props.params.environmentName)
     );
     return {
+        deployments: values(state.deployments.collection).filter(value => {
+            return value.environmentName === props.params.environmentName;
+        }),
         environment: state.environments.collection[props.params.environmentName],
         lambdas: filterLambdasByEnvironment(state.lambdas.collection)
     };
 }
+
 function mapDispatchToProps (dispatch) {
     return {
+        listDeployments: bindActionCreators(listDeployments, dispatch),
         listEnvironments: bindActionCreators(listEnvironments, dispatch),
         listLambdas: bindActionCreators(listLambdas, dispatch)
     };
 }
+
 export default connect(mapStateToProps, mapDispatchToProps)(Environment);
