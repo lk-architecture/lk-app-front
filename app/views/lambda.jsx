@@ -170,7 +170,7 @@ class Lambda extends Component {
                     }
                     {deployments.error!=null ?
                         <Alert bsStyle="danger">
-                            <strong>{"Error "}</strong>{deployments.error.toString()}
+                            <strong>{"Error "}</strong>{deployments.error.statusText}
                         </Alert>
                     : ""}
                 </div>
@@ -178,7 +178,6 @@ class Lambda extends Component {
 
         ): null;
     }
-
 }
 
 function mapStateToProps (state, props) {
