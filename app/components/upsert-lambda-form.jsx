@@ -29,6 +29,7 @@ class UpsertLambdaForm extends Component {
 
     render () {
         const {fields, handleSubmit} = this.props;
+        console.log(this.props.fields);
         return (
             <form onSubmit={handleSubmit}>
                 <Input
