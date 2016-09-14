@@ -1,4 +1,4 @@
-FROM node
+FROM node:6
 MAINTAINER Wattellina <wattellina@mondora.com>
 
 ADD . /lk-app-front
