@@ -4,15 +4,14 @@ import React, {Component, PropTypes} from "react";
 import {Button, Breadcrumb} from "react-bootstrap";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
-import moment from "moment";
 
+import {listDeployments} from "actions/deployments";
+import {listEnvironments} from "actions/environments";
+import {listLambdas} from "actions/lambdas";
 import Icon from "components/icon";
 import * as AppPropTypes from "lib/app-prop-types";
+import {lastDate} from "lib/date-utils";
 import history from "lib/history";
-import {listEnvironments} from "actions/environments";
-import {listDeployments} from "actions/deployments";
-import {listLambdas} from "actions/lambdas";
-
 
 class Environment extends Component {
 
@@ -32,20 +31,6 @@ class Environment extends Component {
         this.props.listLambdas();
     }
 
-    lastDate (deployments, lambda) {
-        const last = values(deployments).filter(value => {
-            return value.lambdaName === lambda;
-        }).sort((a, b) => {
-            const x = moment.utc(a.timestamp).valueOf();
-            const y = moment.utc(b.timestamp).valueOf();
-            return y - x;
-        })[0];
-        if (last) {
-            return moment(last.timestamp).fromNow();
-        }
-        return "";
-    }
-
     renderNotFound () {
         return (
             <div>{"404 - environment not found :("}</div>
@@ -54,23 +39,6 @@ class Environment extends Component {
 
     renderPage () {
         const {environment, lambdas, deployments} = this.props;
-        moment.updateLocale("en", {
-            relativeTime : {
-                future: "in %s",
-                past:   "%s",
-                s:  "seconds ago",
-                m:  "a minute ago",
-                mm: "%d minutes ago",
-                h:  "an hour ago",
-                hh: "%d hours ago",
-                d:  "a day ago",
-                dd: "%d days ago",
-                M:  "a month ago",
-                MM: "A long time ago in a galaxy far, far away…",
-                y:  "A long time ago in a galaxy far, far away…",
-                yy: "A long time ago in a galaxy far, far away…"
-            }
-        });
         return (
             <div>
                 <div>
@@ -99,8 +67,10 @@ class Environment extends Component {
                         columns={[
                             "name",
                             {
-                                key: "when",
-                                valueFormatter: (value, lambda) => (this.lastDate(deployments, lambda.name))
+                                key: "updated",
+                                valueFormatter: (value, lambda) => (lastDate(deployments, (value) => {
+                                    return value.lambdaName === lambda.name;
+                                }))
                             },
                             {
                                 key: "edit",
