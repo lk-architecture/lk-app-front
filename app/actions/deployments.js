@@ -10,7 +10,9 @@ export const LAMBDA_CREATE_SUCCESS = "LAMBDA_CREATE_SUCCESS";
 export const LAMBDA_DELETE_SUCCESS = "LAMBDA_DELETE_SUCCESS";
 export const LAMBDA_UPDATE_ERROR = "LAMBDA_UPDATE_ERROR";
 
-export function createDeployment (environmentName, lambdaName) {
+export function createDeployment (environmentName, lambdaName, version) {
+    console.log("Start createDeployment");
+    console.log(lambdaName);
     const settings = store.getState().settings;
     return async dispatch => {
         try {
@@ -20,7 +22,8 @@ export function createDeployment (environmentName, lambdaName) {
                 awsAccessKeyId: settings.awsAccessKeyId,
                 awsSecretAccessKey: settings.awsSecretAccessKey,
                 environmentName: environmentName,
-                lambdaName: lambdaName
+                lambdaName: lambdaName,
+                version: version
             });
 
             const dynamodb = getDynamodb();
