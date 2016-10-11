@@ -10,8 +10,9 @@
         "AWS": true
     },
     "plugins": [
-        "react",
-        "babel"
+        "babel",
+        "import",
+        "react"
     ],
     "rules": {
         "babel/generator-star-spacing": [2],
@@ -22,6 +23,7 @@
         "brace-style": [2, "1tbs"],
         "comma-spacing": [2, {"before": false, "after": true}],
         "computed-property-spacing": [2, "never"],
+        "import/extensions": [2],
         "indent": [2, 4],
         "jsx-quotes": [2, "prefer-double"],
         "keyword-spacing": [2, {"before": true, "after": true}],
@@ -47,6 +49,7 @@
         "react/jsx-sort-props": [2],
         "react/jsx-uses-react": [2],
         "react/jsx-uses-vars": [2],
+        "react/jsx-wrap-multilines": [2],
         "react/no-danger": [2],
         "react/no-did-mount-set-state": [2],
         "react/no-did-update-set-state": [2],
@@ -55,7 +58,6 @@
         "react/prefer-es6-class": [2],
         "react/prop-types": [2],
         "react/react-in-jsx-scope": [2],
-        "react/require-extension": [2],
         "react/self-closing-comp": [2],
         "react/sort-comp": [2, {
             "order": [
@@ -71,7 +73,6 @@
                 ]
             }
         }],
-        "react/wrap-multilines": [2],
         "semi": [2, "always"],
         "space-before-blocks": [2, "always"],
         "space-before-function-paren": [2, "always"],

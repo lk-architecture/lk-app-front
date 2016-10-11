@@ -7,7 +7,8 @@ import {
 const defaultGitHubInfo = {
     error: false,
     loading: false,
-    general: {}
+    general: {},
+    commits: {}
 };
 
 export default function gitHubInfo (state = defaultGitHubInfo, action) {

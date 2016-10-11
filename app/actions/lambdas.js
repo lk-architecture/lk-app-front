@@ -37,7 +37,7 @@ export function upsertLambda (environmentName, lambdaConfiguration) {
         try {
             const dynamodb = getDynamodb();
             const lambda = {
-                name: lambdaConfiguration.name,
+                name: lambdaConfiguration.githubRepo,
                 environmentName: environmentName,
                 environmentVariables: lambdaConfiguration.environmentVariables,
                 github: {

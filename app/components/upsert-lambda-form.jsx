@@ -32,12 +32,12 @@ class UpsertLambdaForm extends Component {
         return (
             <form onSubmit={handleSubmit}>
                 <Input
-                    bsStyle={this.getFieldBsStyle(fields.name)}
-                    help={this.getFieldHelp(fields.name)}
-                    label="Name"
-                    placeholder="lambda-my-name"
+                    bsStyle={this.getFieldBsStyle(fields.githubRepo)}
+                    help={this.getFieldHelp(fields.githubRepo)}
+                    label="Github repo"
+                    placeholder="lambda-example"
                     type="text"
-                    {...fields.name}
+                    {...fields.githubRepo}
                 />
                 <Input
                     bsStyle={this.getFieldBsStyle(fields.githubOrg)}
@@ -46,14 +46,6 @@ class UpsertLambdaForm extends Component {
                     placeholder="lk-architecture"
                     type="text"
                     {...fields.githubOrg}
-                />
-                <Input
-                    bsStyle={this.getFieldBsStyle(fields.githubRepo)}
-                    help={this.getFieldHelp(fields.githubRepo)}
-                    label="Github repo"
-                    placeholder="lambda-example"
-                    type="text"
-                    {...fields.githubRepo}
                 />
                 <Input
                     bsStyle={this.getFieldBsStyle(fields.role)}

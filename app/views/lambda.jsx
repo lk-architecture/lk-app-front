@@ -4,13 +4,14 @@ import React, {Component, PropTypes} from "react";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 import moment from "moment";
-import {Alert, Breadcrumb, Grid, Col, Well} from "react-bootstrap";
+import {Alert, Breadcrumb, Grid, Col} from "react-bootstrap";
 
 import {listEnvironments} from "actions/environments";
 import {createDeployment, listDeployments, clearDeploy} from "actions/deployments";
 import {listLambdas, upsertLambda} from "actions/lambdas";
 import {getGitHubInfo} from "actions/githubInfo";
 import UpsertLambdaForm from "components/upsert-lambda-form";
+import GitHub from "components/GitHub";
 import Icon from "components/icon";
 import history from "lib/history";
 import * as AppPropTypes from "lib/app-prop-types";
@@ -32,10 +33,6 @@ const styles = {
     },
     button: {
         padding: "5pt"
-    },
-    github: {
-        paddingTop: "5px",
-        fontSize: "11px"
     }
 };
 
@@ -58,20 +55,24 @@ class Lambda extends Component {
         upsertLambda: PropTypes.func.isRequired
     }
 
+    constructor (props) {
+        super(props);
+        this.state = {
+            githubLoaded: false
+        };
+    }
+
     componentWillMount () {
         this.props.listDeployments();
         this.props.listEnvironments();
         this.props.listLambdas();
     }
 
+    // TODO: capire se sostituire lo state nel reducer
     componentWillReceiveProps (nextProps) {
-        if (nextProps.gitHubInfo.general) {
-            const name = (nextProps.lambda && nextProps.lambda.name ? nextProps.lambda.name : "");
-            if (name != nextProps.gitHubInfo.general.name &&
-                nextProps.lambda &&
-                !nextProps.gitHubInfo.loading) {
-                this.props.getGitHubInfo(nextProps);
-            }
+        if (!this.state.githubLoaded && nextProps.lambda && nextProps.lambda.github) {
+            this.setState({githubLoaded: true});
+            this.props.getGitHubInfo(nextProps.lambda.github);
         }
     }
 
@@ -102,36 +103,11 @@ class Lambda extends Component {
         return collection;
     }
 
-    isLastDeployUpdated (deploymentsCollection, gitHubInfo) {
-        const lastDeploy = deploymentsCollection[0];
-        if (!gitHubInfo.loading && lastDeploy) {
-            const commit = this.lastCommit(gitHubInfo.commits);
-            if (commit) {
-                return (lastDeploy.version ?
-                    (lastDeploy.version==gitHubInfo.general.version && lastDeploy.timestamp>commit.author.date)
-                :
-                    (lastDeploy.timestamp>commit.author.date)
-                );
-            }
-        }
-        return false;
-    }
-
-    lastCommit (commits) {
-        if (commits) {
-            return commits[0].commit;
-        }
-        return null;
-    }
-
     render () {
         const {deployments, lambda, environmentName, gitHubInfo} = this.props;
         const name = (lambda && lambda.name ? lambda.name : "");
         const deploymentsCollection = this.sortCollection(name, environmentName, deployments);
-
-        var commit = this.lastCommit(gitHubInfo.commits);
-        var updateWarning = this.isLastDeployUpdated(deploymentsCollection, gitHubInfo);
-        return lambda && commit ? (
+        return lambda ? (
             <div>
                 <div>
                     <Breadcrumb>
@@ -160,40 +136,12 @@ class Lambda extends Component {
                                 onSubmit={::this.handleSubmit}
                             />
                         </Col>
-                        {!gitHubInfo.loading ?
-                            <Col md={4} xs={6}>
-                                <Well>
-                                    <div style={styles.github}>
-                                        <div><b>{"GitHub Info"}</b></div>
-                                        <div><b>{"version "}</b>{gitHubInfo.general.version}</div>
-                                        <div><b>{"author "}</b>{gitHubInfo.general.author}</div>
-                                        <b>{"Description "}</b>{gitHubInfo.general.description}
-                                    </div>
-                                    <div style={styles.github}>
-                                        <div><b>{"Last Commit"}</b></div>
-                                        <div><b>{"date "}</b>{commit.author.date}</div>
-                                        <div><b>{"message "}</b>{commit.message}</div>
-                                        <div><b>{"author "}</b>{commit.author.name}</div>
-                                        <div><b>{"email "}</b>{commit.author.email}</div>
-                                    </div>
-                                    <div style={styles.github}>
-                                    {updateWarning ?
-                                        <Alert bsStyle="success">
-                                            {"The last deploy is updated with the last version from GitHub."}
-                                        </Alert>
-                                    :
-                                        <Alert bsStyle="danger">
-                                            <strong>{"Warning: "}</strong>{"The last deploy is not updated with the last version from GitHub."}
-                                        </Alert>
-                                    }
-                                    </div>
-                                </Well>
-                            </Col>
-                        :
-                            <Col md={4} xs={6}>
-                                <Well>{"GitHub Info - loading please waith"}</Well>
-                            </Col>
-                        }
+                        <Col md={4} xs={6}>
+                            <GitHub
+                                collection={deploymentsCollection}
+                                info={gitHubInfo}
+                            />
+                        </Col>
                     </Grid>
 
                     <div style={styles.header}>
