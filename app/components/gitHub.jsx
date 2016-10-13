@@ -87,9 +87,9 @@ export default class GitHub extends Component {
             const updateWarning = this.isLastDeployUpdated(deploymentsCollection, gitHubInfo);
 
             return updateWarning ? (
-                this.getAlert("Updated: ", "The last deploy is updated with the last version from GitHub.", "success")
+                this.getAlert("Updated: ", "The last deploy is updated with the latest version from GitHub.", "success")
             ):(
-                this.getAlert("Warning: ", "The last deploy is not updated with the last version from GitHub.", "danger")
+                this.getAlert("Warning: ", "The last deploy is not updated with the latest version from GitHub.", "danger")
             );
         }
     }
@@ -99,7 +99,7 @@ export default class GitHub extends Component {
 
         return info.error ? (
             <div style={styles.github}>
-                {this.getAlert("Error: ", "Lambda not found on github, please verifiy all information.", "danger")}
+                {this.getAlert("Error: ", "Lambda not found on GitHub, please verifiy all informations.", "danger")}
             </div>
         ) : (
             this.renderInfo(info, collection)

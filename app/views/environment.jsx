@@ -1,17 +1,32 @@
 import Table from "bootstrap-table-react";
 import {pickBy, propEq, values} from "ramda";
 import React, {Component, PropTypes} from "react";
-import {Button, Breadcrumb} from "react-bootstrap";
+import {Button, Breadcrumb, Input, Grid, Col} from "react-bootstrap";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
+import moment from "moment";
 
 import {listDeployments} from "actions/deployments";
 import {listEnvironments} from "actions/environments";
 import {listLambdas} from "actions/lambdas";
 import Icon from "components/icon";
 import * as AppPropTypes from "lib/app-prop-types";
-import {lastDate} from "lib/date-utils";
+import {lastDate, getMoment} from "lib/date-utils";
 import history from "lib/history";
+
+const styles = {
+    button: {
+        padding: "5pt"
+    },
+
+    colLeft: {
+        textAlign: "left"
+    },
+
+    colRight: {
+        textAlign: "right"
+    }
+};
 
 class Environment extends Component {
 
@@ -25,10 +40,62 @@ class Environment extends Component {
         listLambdas: PropTypes.func.isRequired
     }
 
+    constructor (props) {
+        super(props);
+        this.state = {
+            firstNewest: true,
+            lambdaFilter: ""
+        };
+    }
+
     componentWillMount () {
         this.props.listEnvironments();
         this.props.listDeployments();
         this.props.listLambdas();
+    }
+
+    editCollection () {
+        const {lambdas, deployments} = this.props;
+        values(lambdas).forEach(value =>
+            value.timestamp=lastDate(deployments, (valueFilter) => {
+                return valueFilter.lambdaName === value.name;
+            }
+        ));
+        return this.filterCollection(lambdas);
+    }
+
+    filterCollection (lambdas) {
+        const filtered = values(lambdas).filter(value => {
+            return value.name.match(this.state.lambdaFilter);
+        });
+        return filtered;
+    }
+
+    changeSort (sort) {
+        (sort != this.state.firstNewest ?
+            this.setState({firstNewest: sort}) :
+            null
+        );
+    }
+
+    onChangeSearch () {
+        return event => {
+            this.setState({lambdaFilter: event.target.value});
+        };
+    }
+
+    sortLambda () {
+        const {environment} = this.props;
+        const lambdas = this.editCollection();
+
+        const collection = values(lambdas).filter(value => {
+            return value.environmentName === environment.name;
+        }).sort((a, b) => {
+            const x = moment.utc(a.timestamp).valueOf();
+            const y = moment.utc(b.timestamp).valueOf();
+            return (this.state.firstNewest ? y - x : x - y);
+        });
+        return collection;
     }
 
     renderNotFound () {
@@ -37,8 +104,41 @@ class Environment extends Component {
         );
     }
 
+    renderTable () {
+
+        const lambdas = this.sortLambda();
+        const {environment} = this.props;
+        return (
+            <Table
+                collection={lambdas}
+                columns={[
+                    "name",
+                    {
+                        key: "last deploy",
+                        valueFormatter: (value, lambda) => (getMoment(lambda.timestamp))
+                    },
+                    {
+                        key: "edit",
+                        valueFormatter: (value, lambda) => (
+                            <Icon
+                                icon="edit"
+                                onClick={() => history.push(`/environments/${environment.name}/lambda/${lambda.name}`)}
+                            />
+                        )
+                    }
+                ]}
+                onRowClick={(event) => history.push(`/environments/${event.environmentName}/lambda/${event.name}`)}
+                tableOptions={{
+                    hover: true,
+                    responsive: true,
+                    striped: true
+                }}
+            />
+        );
+    }
+
     renderPage () {
-        const {environment, lambdas, deployments} = this.props;
+        const {environment} = this.props;
         return (
             <div>
                 <div>
@@ -47,7 +147,7 @@ class Environment extends Component {
                             {"Home"}
                         </Breadcrumb.Item>
                         <Breadcrumb.Item active={true}>
-                          {environment.name}
+                            {environment.name}
                         </Breadcrumb.Item>
                     </Breadcrumb>
                 </div>
@@ -62,33 +162,31 @@ class Environment extends Component {
                     <p>{`Events bucket: ${environment.services.s3.eventsBucket}`}</p>
                     <hr />
                     <h4>{"Lambdas"}</h4>
-                    <Table
-                        collection={values(lambdas)}
-                        columns={[
-                            "name",
-                            {
-                                key: "updated",
-                                valueFormatter: (value, lambda) => (lastDate(deployments, (value) => {
-                                    return value.lambdaName === lambda.name;
-                                }))
-                            },
-                            {
-                                key: "edit",
-                                valueFormatter: (value, lambda) => (
-                                    <Icon
-                                        icon="edit"
-                                        onClick={() => history.push(`/environments/${environment.name}/lambda/${lambda.name}`)}
-                                    />
-                                )
-                            }
-                        ]}
-                        onRowClick={(event) => history.push(`/environments/${event.environmentName}/lambda/${event.name}`)}
-                        tableOptions={{
-                            hover: true,
-                            responsive: true,
-                            striped: true
-                        }}
-                    />
+                    <Grid>
+                        <Col md={4} style={styles.colLeft} xs={4}>
+                            <Input
+                                onChange={this.onChangeSearch("value")}
+                                placeholder="search lambda"
+                                type="text"
+                            />
+                        </Col>
+                        <Col md={8}  style={styles.colRight} xs={8}>
+                            <Icon
+                                icon="sort-numeric-asc"
+                                onClick={() => this.changeSort(true)}
+                                size="20px"
+                                style={styles.button}
+                            />
+                            <Icon
+                                icon="sort-numeric-desc"
+                                onClick={() => this.changeSort(false)}
+                                size="20px"
+                                style={styles.button}
+                            />
+                        </Col>
+                    </Grid>
+
+                    {this.renderTable()}
                     <Button
                         block={true}
                         onClick={() => history.push(`/environments/${environment.name}/lambda/new`)}
@@ -105,7 +203,6 @@ class Environment extends Component {
             this.props.environment ? this.renderPage() : this.renderNotFound()
         );
     }
-
 }
 
 function mapStateToProps (state, props) {

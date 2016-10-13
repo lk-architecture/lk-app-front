@@ -9,7 +9,7 @@ import {listEnvironments} from "actions/environments";
 import {listDeployments} from "actions/deployments";
 import Icon from "components/icon";
 import * as AppPropTypes from "lib/app-prop-types";
-import {lastDate} from "lib/date-utils";
+import {lastDate, getMoment} from "lib/date-utils";
 import history from "lib/history";
 
 class Environments extends Component {
@@ -34,7 +34,7 @@ class Environments extends Component {
                 <div>
                     <Breadcrumb>
                         <Breadcrumb.Item active={true}>
-                          {"Home"}
+                            {"Home"}
                         </Breadcrumb.Item>
                     </Breadcrumb>
                 </div>
@@ -47,9 +47,9 @@ class Environments extends Component {
                             },
                             {
                                 key: "updated",
-                                valueFormatter: (value, environment) => (lastDate(deployments, (value) => {
+                                valueFormatter: (value, environment) => (getMoment(lastDate(deployments, (value) => {
                                     return value.environmentName === environment.name;
-                                }))
+                                })))
                             },
                             {
                                 key: "edit",

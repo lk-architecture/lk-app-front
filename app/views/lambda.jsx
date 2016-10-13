@@ -49,7 +49,7 @@ class Lambda extends Component {
         getGitHubInfo : PropTypes.func.isRequired,
         gitHubInfo: PropTypes.any,
         lambda: AppPropTypes.lambda,
-        listDeployments: PropTypes.string.isRequired,
+        listDeployments: PropTypes.func.isRequired,
         listEnvironments: PropTypes.func.isRequired,
         listLambdas: PropTypes.func.isRequired,
         upsertLambda: PropTypes.func.isRequired
@@ -68,7 +68,6 @@ class Lambda extends Component {
         this.props.listLambdas();
     }
 
-    // TODO: capire se sostituire lo state nel reducer
     componentWillReceiveProps (nextProps) {
         if (!this.state.githubLoaded && nextProps.lambda && nextProps.lambda.github) {
             this.setState({githubLoaded: true});
@@ -118,7 +117,7 @@ class Lambda extends Component {
                             {this.props.environmentName}
                         </Breadcrumb.Item>
                         <Breadcrumb.Item active={true}>
-                          {lambda.name}
+                            {lambda.name}
                         </Breadcrumb.Item>
                     </Breadcrumb>
                 </div>
@@ -149,22 +148,22 @@ class Lambda extends Component {
                             <h3>{"Deployments"}</h3>
                         </div>
 
-                            {deployments.creationRunning ? null :
-                                <div>
-                                    <Icon
-                                        icon="cloud-upload"
-                                        onClick={::this.deploy}
-                                        size="30px"
-                                        style={styles.button}
-                                    />
-                                    <Icon
-                                        icon="trash"
-                                        onClick={::this.clear}
-                                        size="30px"
-                                        style={styles.button}
-                                    />
-                                </div>
-                            }
+                        {deployments.creationRunning ? null :
+                            <div>
+                                <Icon
+                                    icon="cloud-upload"
+                                    onClick={::this.deploy}
+                                    size="30px"
+                                    style={styles.button}
+                                />
+                                <Icon
+                                    icon="trash"
+                                    onClick={::this.clear}
+                                    size="30px"
+                                    style={styles.button}
+                                />
+                            </div>
+                        }
                     </div>
 
                     {deployments.creationRunning ?
@@ -176,24 +175,24 @@ class Lambda extends Component {
                             />
                         </div>
                          :
-                        <Table
-                            collection={deploymentsCollection}
-                            columns={[
-                                "id",
-                                "awsRegion",
-                                "environmentName",
-                                "version",
-                                {
-                                    key: "timestamp",
-                                    valueFormatter: time => moment(time).format("HH:mm:ss - MMMM Do YYYY")
-                                }
-                            ]}
-                            tableOptions={{
-                                hover: true,
-                                responsive: true,
-                                striped: true
-                            }}
-                        />
+                             <Table
+                                 collection={deploymentsCollection}
+                                 columns={[
+                                     "id",
+                                     "awsRegion",
+                                     "environmentName",
+                                     "version",
+                                     {
+                                         key: "timestamp",
+                                         valueFormatter: time => moment(time).format("HH:mm:ss - MMMM Do YYYY")
+                                     }
+                                 ]}
+                                 tableOptions={{
+                                     hover: true,
+                                     responsive: true,
+                                     striped: true
+                                 }}
+                             />
                     }
                     {deployments.error!=null ?
                         <Alert bsStyle="danger">

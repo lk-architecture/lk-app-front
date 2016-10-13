@@ -15,7 +15,8 @@ const store = compose(
 )(createStore)(rootReducer, {}, autoRehydrate());
 
 persistStore(store, {
-    whitelist: ["settings"]
+    whitelist: ["settings"],
+    keyPrefix: "lk-app-front:"
 });
 
 export default store;

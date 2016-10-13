@@ -19,6 +19,13 @@ moment.updateLocale("en", {
     }
 });
 
+export function getMoment (data) {
+    if (data) {
+        return moment.utc(data).fromNow();
+    }
+    return "Never evah...";
+}
+
 export function lastDate (collection, filter) {
     const last = values(collection).filter(value => {
         return filter(value);
@@ -28,7 +35,7 @@ export function lastDate (collection, filter) {
         return y - x;
     })[0];
     if (last) {
-        return moment.utc(last.timestamp).fromNow();
+        return last.timestamp;
     }
-    return "Never evah...";
+    return null;
 }
