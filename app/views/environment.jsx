@@ -1,14 +1,16 @@
 import Table from "bootstrap-table-react";
 import {pickBy, propEq, values} from "ramda";
 import React, {Component, PropTypes} from "react";
-import {Button, Breadcrumb, Input, Grid, Col} from "react-bootstrap";
+import {Button, Breadcrumb, Col, Input, Grid} from "react-bootstrap";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 import moment from "moment";
+import {get} from "lodash";
 
 import {listDeployments} from "actions/deployments";
 import {listEnvironments} from "actions/environments";
 import {listLambdas} from "actions/lambdas";
+import {listRepoInfo} from "actions/githubInfo";
 import Icon from "components/icon";
 import * as AppPropTypes from "lib/app-prop-types";
 import {lastDate, getMoment} from "lib/date-utils";
@@ -33,16 +35,19 @@ class Environment extends Component {
     static propTypes = {
         deployments: PropTypes.any,
         environment: AppPropTypes.environment,
+        gitHubInfo: PropTypes.any,
         lambda: AppPropTypes.lambda,
         lambdas: PropTypes.objectOf(AppPropTypes.lambda),
         listDeployments: PropTypes.func.isRequired,
         listEnvironments: PropTypes.func.isRequired,
-        listLambdas: PropTypes.func.isRequired
+        listLambdas: PropTypes.func.isRequired,
+        listRepoInfo: PropTypes.func.isRequired
     }
 
     constructor (props) {
         super(props);
         this.state = {
+            githubLoaded: false,
             firstNewest: true,
             lambdaFilter: ""
         };
@@ -52,6 +57,22 @@ class Environment extends Component {
         this.props.listEnvironments();
         this.props.listDeployments();
         this.props.listLambdas();
+    }
+
+    componentWillReceiveProps (nextProps) {
+        if (values(nextProps.lambdas).length>0 && !this.state.githubLoaded) {
+            const orgs = values(nextProps.lambdas).map(function (obj) {
+                return obj.github.org;
+            });
+            const distinctOrgs = orgs.filter(function (v, i) {
+                return orgs.indexOf(v) == i;
+            });
+
+            this.setState({
+                githubLoaded: true
+            });
+            this.props.listRepoInfo(distinctOrgs);
+        }
     }
 
     editCollection () {
@@ -98,6 +119,62 @@ class Environment extends Component {
         return collection;
     }
 
+    checkGithub (lambdas) {
+        values(lambdas).forEach(value =>
+            value.gitHubInfoUpdate = this.findInRepo(value)
+        );
+        return lambdas;
+    }
+
+    findInRepo (lambda) {
+        const repoInfo = get(this.props, "gitHubInfo.repoInfo['"+ lambda.github.org + "'].data", null);
+
+        if (repoInfo==null || repoInfo.length < 1) { // repo not retrieved - loading)
+            return -1;
+        }
+
+        const info = repoInfo.find(value => {
+            return value.name==lambda.github.repo;
+        });
+
+        if (!info) { // lambda not found
+            return 0;
+        }
+
+        if (!lambda.timestamp) {  // lambda never deployed
+            return 1;
+        }
+
+        if (lambda.timestamp < info.updated_at) { // lambda not updated
+            return 2;
+        }
+
+        return 3; // lambda updated
+    }
+
+    gitHubIcon (icon) {
+        if (icon<0) {
+            return "circle-o-notch";
+        }
+        return "github-square";
+    }
+
+    gitHubColor (icon) {
+        switch (icon) {
+        case -1:
+            return "#12b0c5";
+        case 0 :
+            return "#ff1744";
+        case 1 :
+        case 2 :
+            return "#ffd600";
+        case 3 :
+            return "#00e676";
+        default:
+            return "";
+        }
+    }
+
     renderNotFound () {
         return (
             <div>{"404 - environment not found :("}</div>
@@ -105,8 +182,8 @@ class Environment extends Component {
     }
 
     renderTable () {
-
-        const lambdas = this.sortLambda();
+        const lambdasWithSort = this.sortLambda();
+        const lambdas = this.checkGithub(lambdasWithSort);
         const {environment} = this.props;
         return (
             <Table
@@ -118,11 +195,23 @@ class Environment extends Component {
                         valueFormatter: (value, lambda) => (getMoment(lambda.timestamp))
                     },
                     {
+                        key: "github",
+                        valueFormatter: (value, lambda) => (
+                            <Icon
+                                color={this.gitHubColor(lambda.gitHubInfoUpdate)}
+                                icon={this.gitHubIcon(lambda.gitHubInfoUpdate)}
+                                size="25px"
+                                spin={lambda.gitHubInfoUpdate==-1}
+                            />
+                        )
+                    },
+                    {
                         key: "edit",
                         valueFormatter: (value, lambda) => (
                             <Icon
                                 icon="edit"
                                 onClick={() => history.push(`/environments/${environment.name}/lambda/${lambda.name}`)}
+                                size="20px"
                             />
                         )
                     }
@@ -214,7 +303,8 @@ function mapStateToProps (state, props) {
             return value.environmentName === props.params.environmentName;
         }),
         environment: state.environments.collection[props.params.environmentName],
-        lambdas: filterLambdasByEnvironment(state.lambdas.collection)
+        lambdas: filterLambdasByEnvironment(state.lambdas.collection),
+        gitHubInfo: state.gitHubInfo
     };
 }
 
@@ -222,7 +312,8 @@ function mapDispatchToProps (dispatch) {
     return {
         listDeployments: bindActionCreators(listDeployments, dispatch),
         listEnvironments: bindActionCreators(listEnvironments, dispatch),
-        listLambdas: bindActionCreators(listLambdas, dispatch)
+        listLambdas: bindActionCreators(listLambdas, dispatch),
+        listRepoInfo: bindActionCreators(listRepoInfo, dispatch)
     };
 }
 
