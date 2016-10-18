@@ -1,17 +1,18 @@
 import {applyMiddleware, compose, createStore} from "redux";
-import logger from "redux-logger";
 import {persistStore, autoRehydrate} from "redux-persist";
+import createLogger from "redux-logger";
 
 import safeDispatchThunk from "lib/safe-dispatch-thunk";
 import rootReducer from "reducers";
 
-const middleware = applyMiddleware(
-    safeDispatchThunk,
-    logger({collapsed: true})
-);
+const middlewares = [safeDispatchThunk];
+
+if (process.env.NODE_ENV !== "test") {
+    middlewares.push(createLogger({collapsed: true}));
+}
 
 const store = compose(
-    middleware
+    applyMiddleware(...middlewares)
 )(createStore)(rootReducer, {}, autoRehydrate());
 
 persistStore(store, {

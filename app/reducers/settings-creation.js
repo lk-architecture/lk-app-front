@@ -1,4 +1,7 @@
-import {RESET_SETTINGS_PROGRESS, SAVE_SETTINGS} from "actions/settings";
+import {
+    RESET_SETTINGS_PROGRESS,
+    SAVE_SETTINGS
+} from "actions/settings";
 
 const defaultSettingsCreation = {
     completed: false,

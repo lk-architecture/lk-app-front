@@ -17,6 +17,7 @@ const defaultGitHubInfo = {
 
 export default function gitHubInfo (state = defaultGitHubInfo, action) {
     const {type, payload} = action;
+
     switch (type) {
     case GITHUB_INFO_START:
     case REPO_INFO_START:

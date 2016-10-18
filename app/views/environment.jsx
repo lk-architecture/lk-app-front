@@ -127,8 +127,8 @@ class Environment extends Component {
     }
 
     findInRepo (lambda) {
-        const repoInfo = get(this.props, "gitHubInfo.repoInfo['"+ lambda.github.org + "'].data", null);
 
+        const repoInfo = get(this.props, "gitHubInfo.repoInfo['"+ lambda.github.org + "'].data", null);
         if (repoInfo==null || repoInfo.length < 1) { // repo not retrieved - loading)
             return -1;
         }

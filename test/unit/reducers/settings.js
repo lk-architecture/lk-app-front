@@ -21,9 +21,9 @@ describe("Settings reducer", () => {
             payload: actionPayload
         };
 
-        const store = settings({}, action);
+        const ret = settings({}, action);
 
-        expect(store).to.deep.equal({
+        expect(ret).to.deep.equal({
             awsAccessKeyId: "awsAccessKeyId",
             awsSecretAccessKey: "awsSecretAccessKey",
             awsRegion: "us-east-1",
