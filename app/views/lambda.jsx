@@ -11,7 +11,7 @@ import {createDeployment, listDeployments, clearDeploy} from "actions/deployment
 import {listLambdas, upsertLambda} from "actions/lambdas";
 import {getGitHubInfo} from "actions/github-info";
 import UpsertLambdaForm from "components/upsert-lambda-form";
-import GitHub from "components/GitHub";
+import GitHub from "components/github";
 import Icon from "components/icon";
 import history from "lib/history";
 import * as AppPropTypes from "lib/app-prop-types";
