@@ -18,7 +18,7 @@ export const kvPairList = PropTypes.arrayOf(kvPair);
 export const lambda = PropTypes.shape({
     id: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
-    environmentVariables: kvPairList.isRequired,
+    environmentVariables: kvPairList,
     github: PropTypes.shape({
         org: PropTypes.string.isRequired,
         repo: PropTypes.string.isRequired

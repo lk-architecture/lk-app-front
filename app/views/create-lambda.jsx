@@ -1,10 +1,10 @@
 import React, {Component, PropTypes} from "react";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
-import {Breadcrumb} from "react-bootstrap";
+import {Alert, Breadcrumb} from "react-bootstrap";
 
 import UpsertLambdaForm from "components/upsert-lambda-form";
-import {upsertLambda} from "actions/lambdas";
+import {upsertLambda, upsertLambdaReset} from "actions/lambdas";
 import history from "lib/history";
 
 class CreateLambda extends Component {
@@ -12,17 +12,32 @@ class CreateLambda extends Component {
     static propTypes = {
         environmentName: PropTypes.string,
         lambdaCreation: PropTypes.shape({
-            completed : PropTypes.bool,
-            error: PropTypes.string
+            fetching : PropTypes.bool,
+            error: PropTypes.string,
+            upsertLambda: PropTypes.object,
         }),
-        upsertLambda: PropTypes.func.isRequired
+        upsertLambda: PropTypes.func.isRequired,
+        upsertLambdaReset: PropTypes.func.isRequired
     }
 
     handleSubmit (lambdaConfiguration) {
         this.props.upsertLambda(this.props.environmentName, lambdaConfiguration);
     }
 
+    renderAlert (error) {
+        return (error ?
+            <Alert bsStyle="danger" >
+                <strong>{error.code+": "}</strong>{error.message}
+            </Alert>
+        : null);
+    }
+
     render () {
+        const {fetching, error, upsertLambda} = this.props.lambdaCreation;
+        if (upsertLambda && upsertLambda.name && upsertLambda.environmentName) {
+            history.push(`/environments/${upsertLambda.environmentName}/lambda/${upsertLambda.name}`);
+            this.props.upsertLambdaReset();
+        }
         return (
             <div>
                 <div>
@@ -34,12 +49,13 @@ class CreateLambda extends Component {
                             {this.props.environmentName}
                         </Breadcrumb.Item>
                         <Breadcrumb.Item active={true}>
-                          {"Add Lambda"}
+                            {"Add Lambda"}
                         </Breadcrumb.Item>
                     </Breadcrumb>
                 </div>
+                {this.renderAlert(error)}
                 <div>
-                    <UpsertLambdaForm disabled={!this.props.lambdaCreation.completed} onSubmit={::this.handleSubmit} />
+                    <UpsertLambdaForm disabled={fetching} onSubmit={::this.handleSubmit} />
                 </div>
             </div>
         );
@@ -54,7 +70,8 @@ function mapStateToProps (state, props) {
 }
 function mapDispatchToProps (dispatch) {
     return {
-        upsertLambda: bindActionCreators(upsertLambda, dispatch)
+        upsertLambda: bindActionCreators(upsertLambda, dispatch),
+        upsertLambdaReset: bindActionCreators(upsertLambdaReset, dispatch)
     };
 }
 export default connect(mapStateToProps, mapDispatchToProps)(CreateLambda);

@@ -1,32 +1,36 @@
 import {
     LAMBDA_UPSERT_START,
     LAMBDA_UPSERT_SUCCESS,
-    LAMBDA_UPSERT_ERROR
+    LAMBDA_UPSERT_ERROR,
+    LAMBDA_UPSERT_RESET
 } from "actions/lambdas";
 
 const defaultLambdaCreation = {
-    completed: true,
+    fetching: false,
+    upsertLambda: {},
     error: null
 };
-
 export default function lambdaCreation (state = defaultLambdaCreation, action) {
     const {payload, type} = action;
     switch (type) {
     case LAMBDA_UPSERT_START:
         return {
-            completed: false,
+            fetching: true,
             error: null
         };
     case LAMBDA_UPSERT_ERROR:
         return {
-            completed: true,
+            fetching: false,
             error: payload
         };
     case LAMBDA_UPSERT_SUCCESS:
         return {
-            completed: true,
-            error: null
+            fetching: false,
+            error: null,
+            upsertLambda: payload
         };
+    case LAMBDA_UPSERT_RESET:
+        return defaultLambdaCreation;
     default:
         return state;
     }

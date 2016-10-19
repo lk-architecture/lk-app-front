@@ -5,18 +5,16 @@ import store from "lib/store";
 import {getDynamodb} from "lib/aws-services";
 import {map} from "bluebird";
 
-export const LAMBDA_UPDATE_START = "LAMBDA_UPDATE_START";
-export const LAMBDA_CREATE_SUCCESS = "LAMBDA_CREATE_SUCCESS";
+export const LAMBDA_DEPLOY_START = "LAMBDA_DEPLOY_START";
+export const LAMBDA_DEPLOY_SUCCESS = "LAMBDA_DEPLOY_SUCCESS";
 export const LAMBDA_DELETE_SUCCESS = "LAMBDA_DELETE_SUCCESS";
-export const LAMBDA_UPDATE_ERROR = "LAMBDA_UPDATE_ERROR";
+export const LAMBDA_DEPLOY_ERROR = "LAMBDA_DEPLOY_ERROR";
 
 export function createDeployment (environmentName, lambdaName, version) {
-    console.log("Start createDeployment");
-    console.log(lambdaName);
     const settings = store.getState().settings;
     return async dispatch => {
         try {
-            dispatch({type: LAMBDA_UPDATE_START});
+            dispatch({type: LAMBDA_DEPLOY_START});
             await axios.post(`${settings.backendEndpoint}/deployments`, {
                 awsRegion: settings.awsRegion,
                 awsAccessKeyId: settings.awsAccessKeyId,
@@ -32,12 +30,12 @@ export function createDeployment (environmentName, lambdaName, version) {
             });
 
             dispatch({
-                type: LAMBDA_CREATE_SUCCESS,
+                type: LAMBDA_DEPLOY_SUCCESS,
                 payload: result.Items
             });
         } catch (error) {
             dispatch({
-                type: LAMBDA_UPDATE_ERROR,
+                type: LAMBDA_DEPLOY_ERROR,
                 payload: error,
                 error: true
             });
@@ -48,7 +46,7 @@ export function createDeployment (environmentName, lambdaName, version) {
 export function clearDeploy (environmentName, deploymentsCollection) {
     return async dispatch => {
         try {
-            dispatch({type: LAMBDA_UPDATE_START});
+            dispatch({type: LAMBDA_DEPLOY_START});
             const dynamodb = getDynamodb();
             await map(deploymentsCollection, async (element) => {
                 await dynamodb.deleteAsync({
@@ -65,7 +63,7 @@ export function clearDeploy (environmentName, deploymentsCollection) {
             });
         } catch (error) {
             dispatch({
-                type: LAMBDA_UPDATE_ERROR,
+                type: LAMBDA_DEPLOY_ERROR,
                 payload: error,
                 error: true
             });

@@ -5,6 +5,7 @@ import {getDynamodb} from "lib/aws-services";
 export const LAMBDAS_LIST_START = "LAMBDAS_LIST_START";
 export const LAMBDAS_LIST_SUCCESS = "LAMBDAS_LIST_SUCCESS";
 export const LAMBDAS_LIST_ERROR = "LAMBDAS_LIST_ERROR";
+export const LAMBDA_UPSERT_RESET="LAMBDA_UPSERT_RESET";
 
 export function listLambdas () {
     return async dispatch => {
@@ -63,4 +64,9 @@ export function upsertLambda (environmentName, lambdaConfiguration) {
             });
         }
     };
+}
+
+
+export function upsertLambdaReset () {
+    return {type: LAMBDA_UPSERT_RESET};
 }

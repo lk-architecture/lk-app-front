@@ -2,9 +2,9 @@ import {
     DEPLOYMENTS_LIST_START,
     DEPLOYMENTS_LIST_SUCCESS,
     DEPLOYMENTS_LIST_ERROR,
-    LAMBDA_UPDATE_START,
-    LAMBDA_UPDATE_ERROR,
-    LAMBDA_CREATE_SUCCESS,
+    LAMBDA_DEPLOY_START,
+    LAMBDA_DEPLOY_ERROR,
+    LAMBDA_DEPLOY_SUCCESS,
     LAMBDA_DELETE_SUCCESS
 } from "actions/deployments";
 import {arrayToCollection} from "lib/utils";
@@ -43,19 +43,19 @@ export default function deployments (state = defaultDeployments, action) {
             fetching: false,
             error: payload
         };
-    case LAMBDA_UPDATE_START:
+    case LAMBDA_DEPLOY_START:
         return {
             ...state,
             error: null,
             creationRunning: true
         };
-    case LAMBDA_UPDATE_ERROR:
+    case LAMBDA_DEPLOY_ERROR:
         return {
             ...state,
             creationRunning: false,
             error: payload
         };
-    case LAMBDA_CREATE_SUCCESS:
+    case LAMBDA_DEPLOY_SUCCESS:
         return {
             ...state,
             creationRunning: false,

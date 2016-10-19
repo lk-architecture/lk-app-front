@@ -1,16 +1,16 @@
-import {map} from "ramda";
+import {map, omit} from "ramda";
 import React, {Component, PropTypes} from "react";
 import {Button, Input} from "react-bootstrap";
 import {reduxForm} from "redux-form";
 
 import KVInput from "components/kv-input";
 
-function validate (values) {
+function validate (fields) {
+    const mandatory = omit("environmentVariables", fields);
     return map((value) => {
         return (value != undefined && value.length > 0) ? null : "Required";
-    }, values);
+    }, mandatory);
 }
-
 class UpsertLambdaForm extends Component {
 
     static propTypes = {
@@ -73,7 +73,6 @@ class UpsertLambdaForm extends Component {
 export default reduxForm({
     form: "lambda",
     fields: [
-        "name",
         "githubOrg",
         "githubRepo",
         "role",

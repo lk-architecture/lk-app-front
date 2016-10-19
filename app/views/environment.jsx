@@ -82,6 +82,7 @@ class Environment extends Component {
                 return valueFilter.lambdaName === value.name;
             }
         ));
+
         return this.filterCollection(lambdas);
     }
 
@@ -112,8 +113,8 @@ class Environment extends Component {
         const collection = values(lambdas).filter(value => {
             return value.environmentName === environment.name;
         }).sort((a, b) => {
-            const x = moment.utc(a.timestamp).valueOf();
-            const y = moment.utc(b.timestamp).valueOf();
+            const x = moment.utc((a.timestamp ? a.timestamp : moment())).valueOf();
+            const y = moment.utc((b.timestamp ? b.timestamp : moment())).valueOf();
             return (this.state.firstNewest ? y - x : x - y);
         });
         return collection;
@@ -161,8 +162,6 @@ class Environment extends Component {
 
     gitHubColor (icon) {
         switch (icon) {
-        case -1:
-            return "#12b0c5";
         case 0 :
             return "#ff1744";
         case 1 :
@@ -185,6 +184,7 @@ class Environment extends Component {
         const lambdasWithSort = this.sortLambda();
         const lambdas = this.checkGithub(lambdasWithSort);
         const {environment} = this.props;
+
         return (
             <Table
                 collection={lambdas}

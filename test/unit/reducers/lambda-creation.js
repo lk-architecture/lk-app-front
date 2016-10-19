@@ -16,19 +16,29 @@ describe("Lambda Creation reducer", () => {
 
         const ret = lambdaCreation({}, action);
         expect(ret).to.deep.equal({
-            completed: false,
+            fetching: true,
             error:null
         });
     });
 
     it("Expect lambda upsert to be fetched", () => {
+        const input = {
+            name:"test13",
+            environmentName:"deleteme",
+            github:{
+                org:"test13",
+                repo:"test13"
+            },
+            role:"test13"};
         const action = {
             type: LAMBDA_UPSERT_SUCCESS,
+            payload: input
         };
 
         const ret = lambdaCreation({}, action);
         expect(ret).to.deep.equal({
-            completed: true,
+            fetching: false,
+            upsertLambda: input,
             error:null
         });
     });
@@ -42,7 +52,7 @@ describe("Lambda Creation reducer", () => {
 
         const ret = lambdaCreation({}, action);
         expect(ret).to.deep.equal({
-            completed: true,
+            fetching: false,
             error:error
         });
     });

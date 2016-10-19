@@ -2,7 +2,7 @@ import {expect} from "chai";
 
 import {
     DEPLOYMENTS_LIST_START, DEPLOYMENTS_LIST_SUCCESS, DEPLOYMENTS_LIST_ERROR,
-    LAMBDA_UPDATE_START, LAMBDA_UPDATE_ERROR, /* LAMBDA_CREATE_SUCCESS */ LAMBDA_DELETE_SUCCESS
+    LAMBDA_DEPLOY_START, LAMBDA_DEPLOY_ERROR, LAMBDA_DEPLOY_SUCCESS, LAMBDA_DELETE_SUCCESS
 } from "actions/deployments";
 import deployments from "reducers/deployments";
 
@@ -104,9 +104,9 @@ describe("Deployments reducer", () => {
         });
     });
 
-    it("Expect starting to fetching lambda update", () => {
+    it("Expect starting to fetching lambda deploy", () => {
         const action = {
-            type: LAMBDA_UPDATE_START
+            type: LAMBDA_DEPLOY_START
         };
         const ret = deployments({}, action);
 
@@ -116,18 +116,73 @@ describe("Deployments reducer", () => {
         });
     });
 
-/*    it("Expect lambda create to be fetched", () => {
+    it("Expect lambda deploy to be fetched", () => {
+        const input = [{
+            id:"1",
+            lambdaRole:"role",
+            lambdaName:"lambdaName1",
+            environmentName:"prod",
+            githubRef:"ref",
+            awsRegion:"eu-west-1",
+            timestamp:"2016-08-25T14:10:05.012Z",
+            environmentVariables:[{
+                value:"1",
+                key:"KEY"
+            }]
+        }, {
+            id:"2",
+            lambdaRole:"role",
+            lambdaName:"lambdaName2",
+            environmentName:"prod",
+            githubRef:"ref",
+            awsRegion:"eu-west-1",
+            timestamp:"2016-08-25T14:10:05.012Z",
+            environmentVariables:[{
+                value:"1",
+                key:"KEY"
+            }]
+        }];
+
+        const output = {
+            "1": {
+                awsRegion: "eu-west-1",
+                environmentName: "prod",
+                environmentVariables:[{
+                    key: "KEY",
+                    value: "1"
+                }],
+                githubRef: "ref",
+                id: "1",
+                lambdaName: "lambdaName1",
+                lambdaRole: "role",
+                timestamp: "2016-08-25T14:10:05.012Z"},
+            "2": {
+                awsRegion: "eu-west-1",
+                environmentName: "prod",
+                environmentVariables:[{
+                    key: "KEY",
+                    value: "1"
+                }],
+                githubRef: "ref",
+                id: "2",
+                lambdaName: "lambdaName2",
+                lambdaRole: "role",
+                timestamp: "2016-08-25T14:10:05.012Z"
+            }
+        };
+
         const action = {
-            type: LAMBDA_CREATE_SUCCESS
+            type: LAMBDA_DEPLOY_SUCCESS,
+            payload: input
         };
         const ret = deployments({}, action);
 
         expect(ret).to.deep.equal({
-            creationRunning: true,
-            error: null
+            collection: output,
+            creationRunning: false
         });
     });
-*/
+
 
     it("Expect lambda delete to be fetched", () => {
         const action = {
@@ -140,10 +195,10 @@ describe("Deployments reducer", () => {
         });
     });
 
-    it("Expect error while fetching lambda update", () => {
-        const error = "Error while fetching lambda update";
+    it("Expect error while fetching lambda deploy", () => {
+        const error = "Error while fetching lambda deploy";
         const action = {
-            type: LAMBDA_UPDATE_ERROR,
+            type: LAMBDA_DEPLOY_ERROR,
             payload: error
         };
         const ret = deployments({}, action);

@@ -33,7 +33,6 @@ export function listRepoInfo (repo = []) {
                     [value]: payloadObject[index]
                 };
             }, {});
-
             dispatch({
                 type: REPO_INFO_SUCCESS,
                 payload : result,

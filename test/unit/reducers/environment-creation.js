@@ -1,7 +1,7 @@
 import {expect} from "chai";
 
 import {
-//    ENVIRONMENT_CREATE_PROGRESS,
+    ENVIRONMENT_CREATE_PROGRESS,
     ENVIRONMENT_CREATE_START,
     ENVIRONMENT_CREATE_ERROR
 } from "actions/environments";
@@ -10,32 +10,48 @@ import environmentCreation from "reducers/environment-creation";
 
 describe("Environment Create reducer", () => {
 
-/*
-    it("Expect starting to fetching environment create", () => {
-        const data = [{
-            id:0,
-            label:"Create events S3 bucket",
-            completed:false
-        }, {
-            id:1,
-            label:"Create kinesis stream",
-            completed:false
-        }, {
-            id:2,
-            label:"Save environment to DynamoDB",
-            completed:false
-        }];
+    it("Expect starting to fetching environment create step 0", () => {
+        const data = 0;
         const action = {
             type: ENVIRONMENT_CREATE_PROGRESS,
             payload: data
         };
 
-        const ret = environmentCreation({}, action);
+        const ret = environmentCreation(undefined, action);
         expect(ret).to.deep.equal({
-            completed:false
+            completed:true,
+            steps:[]
         });
     });
-*/
+
+    it("Expect starting to fetching environment create step 1", () => {
+        const data = 1;
+        const action = {
+            type: ENVIRONMENT_CREATE_PROGRESS,
+            payload: data
+        };
+
+        const ret = environmentCreation(undefined, action);
+        expect(ret).to.deep.equal({
+            completed:true,
+            steps:[]
+        });
+    });
+
+    it("Expect starting to fetching environment create step 2", () => {
+        const data = 2;
+        const action = {
+            type: ENVIRONMENT_CREATE_PROGRESS,
+            payload: data
+        };
+
+        const ret = environmentCreation(undefined, action);
+        expect(ret).to.deep.equal({
+            completed:true,
+            steps:[]
+        });
+    });
+
     it("Expect environment create in progress to be fetched step 0", () => {
 
         const action = {
