@@ -7,12 +7,12 @@ import {
     REPO_INFO_START,
     REPO_INFO_SUCCESS,
     REPO_INFO_ERROR
-} from "actions/gitHubInfo";
+} from "actions/github-info";
 
-import gitHubInfo from "reducers/gitHubInfo";
+import gitHubInfo from "reducers/github-info";
 
 describe("GitHubInfo reducer", () => {
-    it("Expect starting to fetching gitHubInfo", () => {
+    it("Expect starting to fetching github info", () => {
         const action = {
             type: GITHUB_INFO_START,
         };
@@ -23,7 +23,7 @@ describe("GitHubInfo reducer", () => {
         });
     });
 
-    it("Expect starting to fetching repoInfo", () => {
+    it("Expect starting to fetching repo info", () => {
         const action = {
             type: REPO_INFO_START,
         };
@@ -86,7 +86,7 @@ describe("GitHubInfo reducer", () => {
         });
     });
 
-    it("Expect error while fetching gitHubInfo", () => {
+    it("Expect error while fetching github info", () => {
 
         const action = {
             type: GITHUB_INFO_ERROR
@@ -98,7 +98,7 @@ describe("GitHubInfo reducer", () => {
         });
     });
 
-    it("Expect error while fetching repoInfo", () => {
+    it("Expect error while fetching repo info", () => {
 
         const action = {
             type: REPO_INFO_ERROR

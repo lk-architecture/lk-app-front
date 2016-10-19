@@ -8,7 +8,7 @@ import hasRehydrated from "reducers/has-rehydrated";
 import lambdaCreation from "reducers/lambda-creation";
 import lambdas from "reducers/lambdas";
 import settings from "reducers/settings";
-import gitHubInfo from "reducers/gitHubInfo";
+import githubInfo from "reducers/github-info";
 import settingsCreation from "reducers/settings-creation";
 
 export default combineReducers({
@@ -20,6 +20,6 @@ export default combineReducers({
     lambdaCreation,
     lambdas,
     settings,
-    gitHubInfo,
+    githubInfo,
     settingsCreation
 });

@@ -5,7 +5,7 @@ import {
     REPO_INFO_START,
     REPO_INFO_SUCCESS,
     REPO_INFO_ERROR
-} from "actions/gitHubInfo";
+} from "actions/github-info";
 
 const defaultGitHubInfo = {
     error: false,

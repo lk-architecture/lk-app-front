@@ -9,7 +9,7 @@ import {Alert, Breadcrumb, Grid, Col} from "react-bootstrap";
 import {listEnvironments} from "actions/environments";
 import {createDeployment, listDeployments, clearDeploy} from "actions/deployments";
 import {listLambdas, upsertLambda} from "actions/lambdas";
-import {getGitHubInfo} from "actions/githubInfo";
+import {getGitHubInfo} from "actions/github-info";
 import UpsertLambdaForm from "components/upsert-lambda-form";
 import GitHub from "components/GitHub";
 import Icon from "components/icon";
