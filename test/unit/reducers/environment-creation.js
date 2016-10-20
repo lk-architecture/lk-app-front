@@ -3,7 +3,8 @@ import {expect} from "chai";
 import {
     ENVIRONMENT_CREATE_PROGRESS,
     ENVIRONMENT_CREATE_START,
-    ENVIRONMENT_CREATE_ERROR
+    ENVIRONMENT_CREATE_ERROR,
+    ENVIRONMENT_CREATE_RESET
 } from "actions/environments";
 
 import environmentCreation from "reducers/environment-creation";
@@ -99,6 +100,20 @@ describe("Environment Create reducer", () => {
         const action = {
             type: ENVIRONMENT_CREATE_ERROR,
             payload: data
+        };
+
+        const ret = environmentCreation(undefined, action);
+        expect(ret).to.deep.equal({
+            completed:true,
+            steps:[]
+        });
+    });
+
+
+    it("Expect environment create reset to be fetched", () => {
+
+        const action = {
+            type: ENVIRONMENT_CREATE_RESET
         };
 
         const ret = environmentCreation(undefined, action);

@@ -3,7 +3,8 @@ import {expect} from "chai";
 import {
     LAMBDA_UPSERT_START,
     LAMBDA_UPSERT_SUCCESS,
-    LAMBDA_UPSERT_ERROR
+    LAMBDA_UPSERT_ERROR,
+    LAMBDA_UPSERT_RESET
 } from "actions/lambdas";
 
 import lambdaCreation from "reducers/lambda-creation";
@@ -56,4 +57,18 @@ describe("Lambda Creation reducer", () => {
             error:error
         });
     });
+
+    it("Expect lambda upsert reset to be fetched", () => {
+        const action = {
+            type: LAMBDA_UPSERT_RESET
+        };
+
+        const ret = lambdaCreation({}, action);
+        expect(ret).to.deep.equal({
+            fetching: false,
+            upsertLambda: {},
+            error: null
+        });
+    });
+
 });

@@ -8,6 +8,7 @@ import randomToken from "lib/random-token";
 export const ENVIRONMENTS_LIST_START = "ENVIRONMENTS_LIST_START";
 export const ENVIRONMENTS_LIST_SUCCESS = "ENVIRONMENTS_LIST_SUCCESS";
 export const ENVIRONMENTS_LIST_ERROR = "ENVIRONMENTS_LIST_ERROR";
+export const ENVIRONMENT_CREATE_RESET = "ENVIRONMENT_CREATE_RESET";
 
 export function listEnvironments () {
     return async dispatch => {
@@ -120,4 +121,8 @@ export function createEnvironment (name) {
             });
         }
     };
+}
+
+export function createEnvironmentReset () {
+    return {type: ENVIRONMENT_CREATE_RESET};
 }

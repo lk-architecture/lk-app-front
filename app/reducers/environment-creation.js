@@ -1,7 +1,8 @@
 import {
     ENVIRONMENT_CREATE_PROGRESS,
     ENVIRONMENT_CREATE_START,
-    ENVIRONMENT_CREATE_ERROR
+    ENVIRONMENT_CREATE_ERROR,
+    ENVIRONMENT_CREATE_RESET
 } from "actions/environments";
 
 const defaultEnvironmentCreation = {
@@ -40,6 +41,8 @@ export default function environmentCreation (state = defaultEnvironmentCreation,
                 error:true
             } : step))
         };
+    case ENVIRONMENT_CREATE_RESET:
+        return defaultEnvironmentCreation;
     default:
         return state;
     }

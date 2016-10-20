@@ -4,7 +4,7 @@ import {bindActionCreators} from "redux";
 import {Breadcrumb} from "react-bootstrap";
 import {get} from "lodash";
 
-import {createEnvironment} from "actions/environments";
+import {createEnvironment, createEnvironmentReset} from "actions/environments";
 import CreateEnvironmentForm from "components/create-environment-form";
 import StepsProgressIndicator from "components/steps-progress-indicator";
 import * as AppPropTypes from "lib/app-prop-types";
@@ -14,21 +14,28 @@ class CreateEnvironment extends Component {
 
     static propTypes = {
         createEnvironment: PropTypes.func.isRequired,
+        createEnvironmentReset: PropTypes.func.isRequired,
         environmentCreation: AppPropTypes.environmentCreation
+    }
+
+    componentWillReceiveProps (nextProps) {
+        const environmentName = get(nextProps, "environmentCreation.steps[2].environmentName", null);
+        const completed = get(nextProps, "environmentCreation.steps[2].completed", null);
+        const error = get(nextProps, "environmentCreation.steps[2].error", null);
+        console.log(nextProps);
+        if (environmentName && completed && !error) {
+            history.push(`/environments/${environmentName}`);
+            nextProps.createEnvironmentReset();
+        }
     }
 
     handleSubmit ({name}) {
         this.props.createEnvironment(name);
     }
 
-    render () {
-        const environmentName = get(this.props, "environmentCreation.steps[2].environmentName", null);
-        const completed = get(this.props, "environmentCreation.steps[2].completed", null);
-        const error = get(this.props, "environmentCreation.steps[2].error", null);
 
-        if (environmentName && completed && !error) {
-            history.push(`/environments/${environmentName}`);
-        }
+    render () {
+
         return (
             <div>
                 <div>
@@ -60,7 +67,8 @@ function mapStateToProps (state) {
 
 function mapDispatchToProps (dispatch) {
     return {
-        createEnvironment: bindActionCreators(createEnvironment, dispatch)
+        createEnvironment: bindActionCreators(createEnvironment, dispatch),
+        createEnvironmentReset: bindActionCreators(createEnvironmentReset, dispatch)
     };
 }
 export default connect(mapStateToProps, mapDispatchToProps)(CreateEnvironment);
