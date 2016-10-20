@@ -10,7 +10,7 @@ import {get} from "lodash";
 import {listDeployments} from "actions/deployments";
 import {listEnvironments} from "actions/environments";
 import {listLambdas} from "actions/lambdas";
-import {listRepoInfo} from "actions/githubInfo";
+import {listRepoInfo} from "actions/github-info";
 import Icon from "components/icon";
 import * as AppPropTypes from "lib/app-prop-types";
 import {lastDate, getMoment} from "lib/date-utils";
