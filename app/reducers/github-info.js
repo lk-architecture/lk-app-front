@@ -7,7 +7,7 @@ import {
     REPO_INFO_ERROR
 } from "actions/github-info";
 
-const defaultGitHubInfo = {
+const defaultGithubInfo = {
     error: false,
     loading: false,
     general: {},
@@ -15,7 +15,7 @@ const defaultGitHubInfo = {
     repoInfo: []
 };
 
-export default function gitHubInfo (state = defaultGitHubInfo, action) {
+export default function githubInfo (state = defaultGithubInfo, action) {
     const {type, payload} = action;
 
     switch (type) {

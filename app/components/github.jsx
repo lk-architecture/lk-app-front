@@ -26,13 +26,13 @@ export default class GitHub extends Component {
         );
     }
 
-    isLastDeployUpdated (deploymentsCollection, gitHubInfo) {
+    isLastDeployUpdated (deploymentsCollection, githubInfo) {
         const lastDeploy = deploymentsCollection[0];
-        if (!gitHubInfo.loading && lastDeploy) {
-            const commit = this.lastCommit(gitHubInfo.commits);
+        if (!githubInfo.loading && lastDeploy) {
+            const commit = this.lastCommit(githubInfo.commits);
             if (commit) {
                 return (lastDeploy.version ?
-                    (lastDeploy.version==gitHubInfo.general.version && lastDeploy.timestamp>commit.author.date)
+                    (lastDeploy.version==githubInfo.general.version && lastDeploy.timestamp>commit.author.date)
                 :
                     (lastDeploy.timestamp>commit.author.date)
                 );
@@ -80,11 +80,11 @@ export default class GitHub extends Component {
         );
     }
 
-    renderWarnig (deploymentsCollection, gitHubInfo) {
+    renderWarnig (deploymentsCollection, githubInfo) {
         if (deploymentsCollection.length==0) {
             return this.getAlert("Warning: ", "There is no deploy available for this lambda function.", "warning");
         } else {
-            const updateWarning = this.isLastDeployUpdated(deploymentsCollection, gitHubInfo);
+            const updateWarning = this.isLastDeployUpdated(deploymentsCollection, githubInfo);
 
             return updateWarning ? (
                 this.getAlert("Updated: ", "The last deploy is updated with the latest version from GitHub.", "success")

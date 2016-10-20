@@ -9,7 +9,7 @@ import {Alert, Breadcrumb, Grid, Col} from "react-bootstrap";
 import {listEnvironments} from "actions/environments";
 import {createDeployment, listDeployments, clearDeploy} from "actions/deployments";
 import {listLambdas, upsertLambda} from "actions/lambdas";
-import {getGitHubInfo} from "actions/github-info";
+import {getGithubInfo} from "actions/github-info";
 import UpsertLambdaForm from "components/upsert-lambda-form";
 import GitHub from "components/github";
 import Icon from "components/icon";
@@ -46,8 +46,8 @@ class Lambda extends Component {
         }),
         deployments: PropTypes.any,
         environmentName: PropTypes.string.isRequired,
-        getGitHubInfo : PropTypes.func.isRequired,
-        gitHubInfo: PropTypes.any,
+        getGithubInfo : PropTypes.func.isRequired,
+        githubInfo: PropTypes.any,
         lambda: AppPropTypes.lambda,
         listDeployments: PropTypes.func.isRequired,
         listEnvironments: PropTypes.func.isRequired,
@@ -71,7 +71,7 @@ class Lambda extends Component {
     componentWillReceiveProps (nextProps) {
         if (!this.state.githubLoaded && nextProps.lambda && nextProps.lambda.github) {
             this.setState({githubLoaded: true});
-            this.props.getGitHubInfo(nextProps.lambda.github);
+            this.props.getGithubInfo(nextProps.lambda.github);
         }
     }
 
@@ -80,8 +80,8 @@ class Lambda extends Component {
     }
 
     deploy () {
-        const {createDeployment, environmentName, lambda, gitHubInfo} = this.props;
-        createDeployment(environmentName, lambda.name, gitHubInfo.general.version);
+        const {createDeployment, environmentName, lambda, githubInfo} = this.props;
+        createDeployment(environmentName, lambda.name, githubInfo.general.version);
     }
 
     clear () {
@@ -103,7 +103,7 @@ class Lambda extends Component {
     }
 
     render () {
-        const {deployments, lambda, environmentName, gitHubInfo} = this.props;
+        const {deployments, lambda, environmentName, githubInfo} = this.props;
         const name = (lambda && lambda.name ? lambda.name : "");
         const deploymentsCollection = this.sortCollection(name, environmentName, deployments);
         return lambda ? (
@@ -138,7 +138,7 @@ class Lambda extends Component {
                         <Col md={4} xs={6}>
                             <GitHub
                                 collection={deploymentsCollection}
-                                info={gitHubInfo}
+                                info={githubInfo}
                             />
                         </Col>
                     </Grid>
@@ -210,7 +210,7 @@ function mapStateToProps (state, props) {
     return {
         deployments: state.deployments,
         environmentName: props.params.environmentName,
-        gitHubInfo: state.gitHubInfo,
+        githubInfo: state.githubInfo,
         lambda: find(state.lambdas.collection, lambda => (
             lambda.environmentName === props.params.environmentName &&
             lambda.name === props.params.lambdaName
@@ -221,7 +221,7 @@ function mapDispatchToProps (dispatch) {
     return {
         createDeployment: bindActionCreators(createDeployment, dispatch),
         clearDeploy: bindActionCreators(clearDeploy, dispatch),
-        getGitHubInfo: bindActionCreators(getGitHubInfo, dispatch),
+        getGithubInfo: bindActionCreators(getGithubInfo, dispatch),
         listDeployments: bindActionCreators(listDeployments, dispatch),
         listEnvironments: bindActionCreators(listEnvironments, dispatch),
         listLambdas: bindActionCreators(listLambdas, dispatch),

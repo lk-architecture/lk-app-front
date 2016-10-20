@@ -30,8 +30,6 @@ export default function environmentCreation (state = defaultEnvironmentCreation,
             steps: payload
         };
     case ENVIRONMENT_CREATE_ERROR:
-        console.log(state);
-        console.log(action);
         return {
             ...state,
             steps: state.steps.map((step) => (action.errorStep <= step.id ? {

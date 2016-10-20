@@ -35,7 +35,7 @@ class Environment extends Component {
     static propTypes = {
         deployments: PropTypes.any,
         environment: AppPropTypes.environment,
-        gitHubInfo: PropTypes.any,
+        githubInfo: PropTypes.any,
         lambda: AppPropTypes.lambda,
         lambdas: PropTypes.objectOf(AppPropTypes.lambda),
         listDeployments: PropTypes.func.isRequired,
@@ -122,17 +122,17 @@ class Environment extends Component {
 
     checkGithub (lambdas) {
         values(lambdas).forEach(value =>
-            value.gitHubInfoUpdate = this.findInRepo(value)
+            value.githubInfoUpdate = this.findInRepo(value)
         );
         return lambdas;
     }
 
     findInRepo (lambda) {
-        const repoInfoError = get(this.props, "gitHubInfo.repoInfo['"+ lambda.github.org + "'].error", null);
+        const repoInfoError = get(this.props, "githubInfo.repoInfo['"+ lambda.github.org + "'].error", null);
         if (repoInfoError) {
             return -2;
         }
-        const repoInfo = get(this.props, "gitHubInfo.repoInfo['"+ lambda.github.org + "'].data", null);
+        const repoInfo = get(this.props, "githubInfo.repoInfo['"+ lambda.github.org + "'].data", null);
         if (repoInfo==null || repoInfo.length < 1) { // repo not retrieved - loading)
             return -1;
         }
@@ -205,10 +205,10 @@ class Environment extends Component {
                         key: "github",
                         valueFormatter: (value, lambda) => (
                             <Icon
-                                color={this.gitHubColor(lambda.gitHubInfoUpdate)}
-                                icon={this.gitHubIcon(lambda.gitHubInfoUpdate)}
+                                color={this.gitHubColor(lambda.githubInfoUpdate)}
+                                icon={this.gitHubIcon(lambda.githubInfoUpdate)}
                                 size="25px"
-                                spin={lambda.gitHubInfoUpdate==-1}
+                                spin={lambda.githubInfoUpdate==-1}
                             />
                         )
                     },
@@ -311,7 +311,7 @@ function mapStateToProps (state, props) {
         }),
         environment: state.environments.collection[props.params.environmentName],
         lambdas: filterLambdasByEnvironment(state.lambdas.collection),
-        gitHubInfo: state.gitHubInfo
+        githubInfo: state.githubInfo
     };
 }
 

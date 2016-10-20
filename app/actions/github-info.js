@@ -50,7 +50,7 @@ export function listRepoInfo (repo = []) {
     };
 }
 
-export function getGitHubInfo  (github = {}) {
+export function getGithubInfo  (github = {}) {
     return  async dispatch => {
         try {
             dispatch({type: GITHUB_INFO_START});
