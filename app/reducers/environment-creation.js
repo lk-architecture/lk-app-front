@@ -19,7 +19,9 @@ export default function environmentCreation (state = defaultEnvironmentCreation,
             steps: state.steps.map((step) => (payload === step.id ? {
                 id: step.id,
                 label: step.label,
-                completed: true
+                environmentName: step.environmentName,
+                completed: true,
+                error:false
             } : step))
         };
     case ENVIRONMENT_CREATE_START:
@@ -28,9 +30,17 @@ export default function environmentCreation (state = defaultEnvironmentCreation,
             steps: payload
         };
     case ENVIRONMENT_CREATE_ERROR:
+        console.log(state);
+        console.log(action);
         return {
             ...state,
-            completed: true
+            steps: state.steps.map((step) => (action.errorStep <= step.id ? {
+                id: step.id,
+                label: step.label,
+                environmentName: step.environmentName,
+                completed: false,
+                error:true
+            } : step))
         };
     default:
         return state;

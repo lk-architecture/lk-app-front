@@ -128,7 +128,10 @@ class Environment extends Component {
     }
 
     findInRepo (lambda) {
-
+        const repoInfoError = get(this.props, "gitHubInfo.repoInfo['"+ lambda.github.org + "'].error", null);
+        if (repoInfoError) {
+            return -2;
+        }
         const repoInfo = get(this.props, "gitHubInfo.repoInfo['"+ lambda.github.org + "'].data", null);
         if (repoInfo==null || repoInfo.length < 1) { // repo not retrieved - loading)
             return -1;
@@ -149,19 +152,23 @@ class Environment extends Component {
         if (lambda.timestamp < info.updated_at) { // lambda not updated
             return 2;
         }
-
         return 3; // lambda updated
     }
 
     gitHubIcon (icon) {
-        if (icon<0) {
+        switch (icon) {
+        case -2:
+            return "remove";
+        case -1:
             return "circle-o-notch";
+        default:
+            return "github-square";
         }
-        return "github-square";
     }
 
     gitHubColor (icon) {
         switch (icon) {
+        case -2:
         case 0 :
             return "#ff1744";
         case 1 :

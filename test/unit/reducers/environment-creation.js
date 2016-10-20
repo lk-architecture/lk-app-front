@@ -59,7 +59,7 @@ describe("Environment Create reducer", () => {
             payload: 0
         };
 
-        const ret = environmentCreation({}, action);
+        const ret = environmentCreation(undefined, action);
         expect(ret).to.deep.equal({
             completed:false,
             steps: 0
@@ -73,7 +73,7 @@ describe("Environment Create reducer", () => {
             payload: 1
         };
 
-        const ret = environmentCreation({}, action);
+        const ret = environmentCreation(undefined, action);
         expect(ret).to.deep.equal({
             completed:false,
             steps: 1
@@ -87,7 +87,7 @@ describe("Environment Create reducer", () => {
             payload: 2
         };
 
-        const ret = environmentCreation({}, action);
+        const ret = environmentCreation(undefined, action);
         expect(ret).to.deep.equal({
             completed:false,
             steps: 2
@@ -95,13 +95,16 @@ describe("Environment Create reducer", () => {
     });
 
     it("Expect error while fetching environment create", () => {
+        const data = [];
         const action = {
             type: ENVIRONMENT_CREATE_ERROR,
+            payload: data
         };
 
-        const ret = environmentCreation({}, action);
+        const ret = environmentCreation(undefined, action);
         expect(ret).to.deep.equal({
-            completed:true
+            completed:true,
+            steps:[]
         });
     });
 });

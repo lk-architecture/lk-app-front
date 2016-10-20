@@ -2,6 +2,7 @@ import React, {Component, PropTypes} from "react";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 import {Breadcrumb} from "react-bootstrap";
+import {get} from "lodash";
 
 import {createEnvironment} from "actions/environments";
 import CreateEnvironmentForm from "components/create-environment-form";
@@ -21,6 +22,13 @@ class CreateEnvironment extends Component {
     }
 
     render () {
+        const environmentName = get(this.props, "environmentCreation.steps[2].environmentName", null);
+        const completed = get(this.props, "environmentCreation.steps[2].completed", null);
+        const error = get(this.props, "environmentCreation.steps[2].error", null);
+
+        if (environmentName && completed && !error) {
+            history.push(`/environments/${environmentName}`);
+        }
         return (
             <div>
                 <div>
@@ -29,7 +37,7 @@ class CreateEnvironment extends Component {
                             {"Home"}
                         </Breadcrumb.Item>
                         <Breadcrumb.Item active={true}>
-                          {"Create Environment"}
+                            {"Create Environment"}
                         </Breadcrumb.Item>
                     </Breadcrumb>
                 </div>

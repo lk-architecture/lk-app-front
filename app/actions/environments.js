@@ -38,6 +38,7 @@ export const ENVIRONMENT_CREATE_ERROR = "ENVIRONMENT_CREATE_ERROR";
 
 export function createEnvironment (name) {
     return async dispatch => {
+        var step = 0;
         try {
             const settings = store.getState().settings;
             const dynamodb = getDynamodb();
@@ -47,16 +48,19 @@ export function createEnvironment (name) {
                 payload: [
                     {
                         id: 0,
+                        environmentName: name,
                         label: "Create events S3 bucket",
                         completed: false
                     },
                     {
                         id: 1,
+                        environmentName: name,
                         label: "Create kinesis stream",
                         completed: false
                     },
                     {
                         id: 2,
+                        environmentName: name,
                         label: "Save environment to DynamoDB",
                         completed: false
                     }
@@ -80,6 +84,7 @@ export function createEnvironment (name) {
                 awsSecretAccessKey: settings.awsSecretAccessKey,
                 s3bucketName: environment.services.s3.eventsBucket
             });
+            step=1;
             dispatch({
                 type: ENVIRONMENT_CREATE_PROGRESS,
                 payload: 0
@@ -88,6 +93,7 @@ export function createEnvironment (name) {
                 ShardCount: 1,
                 StreamName: environment.services.kinesis.streamName
             });
+            step=2;
             dispatch({
                 type: ENVIRONMENT_CREATE_PROGRESS,
                 payload: 1
@@ -96,6 +102,7 @@ export function createEnvironment (name) {
                 TableName: config.DYNAMODB_ENVIRONMENTS_TABLE,
                 Item: environment
             });
+
             dispatch({
                 type: ENVIRONMENT_CREATE_PROGRESS,
                 payload: 2
@@ -108,6 +115,7 @@ export function createEnvironment (name) {
             dispatch({
                 type: ENVIRONMENT_CREATE_ERROR,
                 payload: error,
+                errorStep: step,
                 error: true
             });
         }

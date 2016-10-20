@@ -23,6 +23,7 @@ export function listRepoInfo (repo = []) {
                         `https://api.github.com/users/${value}/repos?per_page=100`
                     ).catch(err => {
                         console.log(err);
+                        return {error:true};
                     });
                 });
             });
