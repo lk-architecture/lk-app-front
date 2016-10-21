@@ -22,6 +22,8 @@ export function createDeployment (environmentName, lambdaName, version) {
                 environmentName: environmentName,
                 lambdaName: lambdaName,
                 version: version
+            }, {
+                timeout: 120000,
             });
 
             const dynamodb = getDynamodb();

@@ -4,7 +4,10 @@ import {
     GITHUB_INFO_ERROR,
     REPO_INFO_START,
     REPO_INFO_SUCCESS,
-    REPO_INFO_ERROR
+    REPO_INFO_ERROR,
+    GITHUB_STATUS_START,
+    GITHUB_STATUS_SUCCESS,
+    GITHUB_STATUS_ERROR
 } from "actions/github-info";
 
 const defaultGithubInfo = {
@@ -12,7 +15,8 @@ const defaultGithubInfo = {
     loading: false,
     general: {},
     commits: {},
-    repoInfo: []
+    repoInfo: [],
+    githubStatus:{}
 };
 
 export default function githubInfo (state = defaultGithubInfo, action) {
@@ -20,6 +24,7 @@ export default function githubInfo (state = defaultGithubInfo, action) {
 
     switch (type) {
     case GITHUB_INFO_START:
+    case GITHUB_STATUS_START:
     case REPO_INFO_START:
         return {
             ...state,
@@ -28,6 +33,7 @@ export default function githubInfo (state = defaultGithubInfo, action) {
         };
     case GITHUB_INFO_SUCCESS:
         return {
+            ...state,
             error: false,
             loading: false,
             general: payload.general,
@@ -35,13 +41,23 @@ export default function githubInfo (state = defaultGithubInfo, action) {
         };
     case REPO_INFO_SUCCESS:
         return {
+            ...state,
             error: false,
             loading: false,
             repoInfo: payload
         };
+    case GITHUB_STATUS_SUCCESS:
+        return {
+            ...state,
+            error: false,
+            loading: false,
+            githubStatus: payload
+        };
     case GITHUB_INFO_ERROR:
+    case GITHUB_STATUS_ERROR:
     case REPO_INFO_ERROR:
         return {
+            ...state,
             error: true,
             loading: false
         };

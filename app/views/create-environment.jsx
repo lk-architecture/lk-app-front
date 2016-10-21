@@ -32,8 +32,7 @@ class CreateEnvironment extends Component {
     handleSubmit ({name}) {
         this.props.createEnvironment(name);
     }
-
-
+    
     render () {
 
         return (

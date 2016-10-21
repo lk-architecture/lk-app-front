@@ -11,7 +11,7 @@ const styles = {
     }
 };
 
-export default class GitHub extends Component {
+export default class Github extends Component {
 
     static propTypes = {
         collection: PropTypes.array.isRequired,
@@ -56,7 +56,7 @@ export default class GitHub extends Component {
                         size="30px"
                     />
                     <div style={styles.github}>
-                        <div><b>{"GitHub Info"}</b></div>
+                        <div><b>{"Github Info"}</b></div>
                         <div><b>{"version "}</b>{info.general.version}</div>
                         <div><b>{"author "}</b>{info.general.author}</div>
                         <b>{"Description "}</b>{info.general.description}
@@ -87,9 +87,9 @@ export default class GitHub extends Component {
             const updateWarning = this.isLastDeployUpdated(deploymentsCollection, githubInfo);
 
             return updateWarning ? (
-                this.getAlert("Updated: ", "The last deploy is updated with the latest version from GitHub.", "success")
+                this.getAlert("Updated: ", "The last deploy is updated with the latest version from Github.", "success")
             ):(
-                this.getAlert("Warning: ", "The last deploy is not updated with the latest version from GitHub.", "danger")
+                this.getAlert("Warning: ", "The last deploy is not updated with the latest version from Github.", "warning")
             );
         }
     }
@@ -99,7 +99,7 @@ export default class GitHub extends Component {
 
         return info.error ? (
             <div style={styles.github}>
-                {this.getAlert("Error: ", "Lambda not found on GitHub, please verifiy all informations.", "danger")}
+                {this.getAlert("Error: ", "Lambda not found on Github, please verifiy all informations.", "danger")}
             </div>
         ) : (
             this.renderInfo(info, collection)

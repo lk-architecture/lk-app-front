@@ -9,6 +9,10 @@ export const REPO_INFO_START = "REPO_INFO_START";
 export const REPO_INFO_SUCCESS = "REPO_INFO_SUCCESS";
 export const REPO_INFO_ERROR = "REPO_INFO_ERROR";
 
+export const GITHUB_STATUS_START = "GITHUB_STATUS_START";
+export const GITHUB_STATUS_SUCCESS = "GITHUB_STATUS_SUCCESS";
+export const GITHUB_STATUS_ERROR = "GITHUB_STATUS_ERROR";
+
 export function listRepoInfo (repo = []) {
     return  async dispatch => {
         try {
@@ -62,7 +66,7 @@ export function getGithubInfo  (github = {}) {
 
             // GET commit info from github
             const commits = await axios.get(
-                `https://api.github.com/repos/${org}/${repo}/commits?path=package.json`
+                `https://api.github.com/repos/${org}/${repo}/commits`
             );
 
             const payloadObject = {
@@ -84,4 +88,29 @@ export function getGithubInfo  (github = {}) {
             });
         }
     };
+}
+
+export function getGithubStatus () {
+    return async dispatch => {
+        try {
+
+            dispatch({type: GITHUB_STATUS_START});
+            // GET api limit rate
+            const limit = await axios.get("https://api.github.com/rate_limit");
+
+            dispatch({
+                type: GITHUB_STATUS_SUCCESS,
+                payload : limit,
+                error: false
+            });
+
+        } catch (error) {
+            dispatch({
+                type: GITHUB_STATUS_ERROR,
+                payload : {},
+                error: true
+            });
+        }
+    };
+
 }

@@ -84,6 +84,8 @@ export function createEnvironment (name) {
                 awsAccessKeyId: settings.awsAccessKeyId,
                 awsSecretAccessKey: settings.awsSecretAccessKey,
                 s3bucketName: environment.services.s3.eventsBucket
+            }, {
+                timeout: 120000,
             });
             step=1;
             dispatch({

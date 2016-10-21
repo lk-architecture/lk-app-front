@@ -9,14 +9,14 @@ import {
     REPO_INFO_ERROR
 } from "actions/github-info";
 
-import gitHubInfo from "reducers/github-info";
+import githubInfo from "reducers/github-info";
 
-describe("GitHubInfo reducer", () => {
+describe("GithubInfo reducer", () => {
     it("Expect starting to fetching github info", () => {
         const action = {
             type: GITHUB_INFO_START,
         };
-        const ret = gitHubInfo({}, action);
+        const ret = githubInfo({}, action);
         expect(ret).to.deep.equal({
             error:false,
             loading:true
@@ -27,14 +27,14 @@ describe("GitHubInfo reducer", () => {
         const action = {
             type: REPO_INFO_START,
         };
-        const ret = gitHubInfo({}, action);
+        const ret = githubInfo({}, action);
         expect(ret).to.deep.equal({
             error:false,
             loading:true
         });
     });
 
-    it("Expect gitHubInfo to be fetched", () => {
+    it("Expect githubInfo to be fetched", () => {
         const input = {
             general:{
                 name:"name",
@@ -59,7 +59,7 @@ describe("GitHubInfo reducer", () => {
             type: GITHUB_INFO_SUCCESS,
             payload: input
         };
-        const ret = gitHubInfo({}, action);
+        const ret = githubInfo({}, action);
         expect(ret).to.deep.equal({
             error:false,
             loading:false,
@@ -78,7 +78,7 @@ describe("GitHubInfo reducer", () => {
             type: REPO_INFO_SUCCESS,
             payload: input
         };
-        const ret = gitHubInfo({}, action);
+        const ret = githubInfo({}, action);
         expect(ret).to.deep.equal({
             error:false,
             loading:false,
@@ -91,7 +91,7 @@ describe("GitHubInfo reducer", () => {
         const action = {
             type: GITHUB_INFO_ERROR
         };
-        const ret = gitHubInfo({}, action);
+        const ret = githubInfo({}, action);
         expect(ret).to.deep.equal({
             error:true,
             loading:false
@@ -103,7 +103,7 @@ describe("GitHubInfo reducer", () => {
         const action = {
             type: REPO_INFO_ERROR
         };
-        const ret = gitHubInfo({}, action);
+        const ret = githubInfo({}, action);
         expect(ret).to.deep.equal({
             error:true,
             loading:false

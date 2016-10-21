@@ -1,7 +1,7 @@
 import Table from "bootstrap-table-react";
 import {pickBy, propEq, values} from "ramda";
 import React, {Component, PropTypes} from "react";
-import {Button, Breadcrumb, Col, Input, Grid} from "react-bootstrap";
+import {Alert, Button, Breadcrumb, Col, Input, Grid} from "react-bootstrap";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 import moment from "moment";
@@ -10,7 +10,7 @@ import {get} from "lodash";
 import {listDeployments} from "actions/deployments";
 import {listEnvironments} from "actions/environments";
 import {listLambdas} from "actions/lambdas";
-import {listRepoInfo} from "actions/github-info";
+import {listRepoInfo, getGithubStatus} from "actions/github-info";
 import Icon from "components/icon";
 import * as AppPropTypes from "lib/app-prop-types";
 import {lastDate, getMoment} from "lib/date-utils";
@@ -35,7 +35,9 @@ class Environment extends Component {
     static propTypes = {
         deployments: PropTypes.any,
         environment: AppPropTypes.environment,
+        getGithubStatus: PropTypes.func.isRequired,
         githubInfo: PropTypes.any,
+        githubStatus: PropTypes.any,
         lambda: AppPropTypes.lambda,
         lambdas: PropTypes.objectOf(AppPropTypes.lambda),
         listDeployments: PropTypes.func.isRequired,
@@ -57,6 +59,7 @@ class Environment extends Component {
         this.props.listEnvironments();
         this.props.listDeployments();
         this.props.listLambdas();
+        this.props.getGithubStatus();
     }
 
     componentWillReceiveProps (nextProps) {
@@ -121,13 +124,29 @@ class Environment extends Component {
     }
 
     checkGithub (lambdas) {
-        values(lambdas).forEach(value =>
-            value.githubInfoUpdate = this.findInRepo(value)
-        );
+        values(lambdas).forEach(value =>{
+            value.github.infoUpdate = this.isInRepo(value);
+            value.github.info = this.findInRepo(value);
+        });
         return lambdas;
     }
 
     findInRepo (lambda) {
+        const repoInfoError = get(this.props, "githubInfo.repoInfo['"+ lambda.github.org + "'].error", null);
+        if (repoInfoError) {
+            return null;
+        }
+        const repoInfo = get(this.props, "githubInfo.repoInfo['"+ lambda.github.org + "'].data", null);
+
+        const info = (repoInfo ? repoInfo.find(value => {
+            return value.name==lambda.github.repo;
+        }) : null);
+
+
+        return info;
+    }
+
+    isInRepo (lambda) {
         const repoInfoError = get(this.props, "githubInfo.repoInfo['"+ lambda.github.org + "'].error", null);
         if (repoInfoError) {
             return -2;
@@ -149,13 +168,13 @@ class Environment extends Component {
             return 1;
         }
 
-        if (lambda.timestamp < info.updated_at) { // lambda not updated
+        if (lambda.timestamp < info.pushed_at) { // lambda not updated
             return 2;
         }
         return 3; // lambda updated
     }
 
-    gitHubIcon (icon) {
+    githubIcon (icon) {
         switch (icon) {
         case -2:
             return "remove";
@@ -166,7 +185,7 @@ class Environment extends Component {
         }
     }
 
-    gitHubColor (icon) {
+    githubColor (icon) {
         switch (icon) {
         case -2:
         case 0 :
@@ -181,6 +200,38 @@ class Environment extends Component {
         }
     }
 
+    githubMessage (icon) {
+        switch (icon) {
+        case -2:
+            return "Service Issue";
+        case 0 :
+            return "lambda not found";
+        case 1 :
+            return "lambda never deployed";
+        case 2 :
+            return "lambda not updated";
+        case 3 :
+            return "lambda updated";
+        default:
+            return "";
+        }
+    }
+
+    renderAlert (status) {
+        const limit = get(status, "resources.core.limit", null);
+        const remaining = get(status, "resources.core.remaining", null);
+        const reset = get(status, "resources.core.reset", null);
+        if (limit &&  reset && (remaining < 10)) {
+            const resetDate = new Date(reset * 1000);
+            return (
+                <Alert bsStyle="danger">
+                    {"Alert: you have reach the github API limit, next reset at " + resetDate}
+                </Alert>
+            );
+        }
+        return null;
+    }
+
     renderNotFound () {
         return (
             <div>{"404 - environment not found :("}</div>
@@ -191,7 +242,6 @@ class Environment extends Component {
         const lambdasWithSort = this.sortLambda();
         const lambdas = this.checkGithub(lambdasWithSort);
         const {environment} = this.props;
-
         return (
             <Table
                 collection={lambdas}
@@ -205,11 +255,17 @@ class Environment extends Component {
                         key: "github",
                         valueFormatter: (value, lambda) => (
                             <Icon
-                                color={this.gitHubColor(lambda.githubInfoUpdate)}
-                                icon={this.gitHubIcon(lambda.githubInfoUpdate)}
+                                color={this.githubColor(lambda.github.infoUpdate)}
+                                icon={this.githubIcon(lambda.github.infoUpdate)}
                                 size="25px"
-                                spin={lambda.githubInfoUpdate==-1}
+                                spin={lambda.github.infoUpdate==-1}
                             />
+                        )
+                    },
+                    {
+                        key: "",
+                        valueFormatter: (value, lambda) => (
+                            this.githubMessage(lambda.github.infoUpdate)
                         )
                     },
                     {
@@ -235,6 +291,7 @@ class Environment extends Component {
 
     renderPage () {
         const {environment} = this.props;
+        const status = (this.props.githubStatus ? this.props.githubStatus.data : null);
         return (
             <div>
                 <div>
@@ -248,7 +305,10 @@ class Environment extends Component {
                     </Breadcrumb>
                 </div>
                 <div>
-                    <h3>{`Environment: ${environment.name}`}</h3>
+                    <div>
+                        <div><h3>{`Environment: ${environment.name}`}</h3></div>
+                        <div>{this.renderAlert(status)}</div>
+                    </div>
                     <hr />
                     <h4>{"Kinesis"}</h4>
                     <p>{`Stream name: ${environment.services.kinesis.streamName}`}</p>
@@ -311,12 +371,14 @@ function mapStateToProps (state, props) {
         }),
         environment: state.environments.collection[props.params.environmentName],
         lambdas: filterLambdasByEnvironment(state.lambdas.collection),
-        githubInfo: state.githubInfo
+        githubInfo: state.githubInfo,
+        githubStatus: (state.githubInfo.githubStatus ? state.githubInfo.githubStatus : props.githubStatus)
     };
 }
 
 function mapDispatchToProps (dispatch) {
     return {
+        getGithubStatus: bindActionCreators(getGithubStatus, dispatch),
         listDeployments: bindActionCreators(listDeployments, dispatch),
         listEnvironments: bindActionCreators(listEnvironments, dispatch),
         listLambdas: bindActionCreators(listLambdas, dispatch),

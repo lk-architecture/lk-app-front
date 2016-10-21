@@ -11,7 +11,7 @@ import {createDeployment, listDeployments, clearDeploy} from "actions/deployment
 import {listLambdas, upsertLambda} from "actions/lambdas";
 import {getGithubInfo} from "actions/github-info";
 import UpsertLambdaForm from "components/upsert-lambda-form";
-import GitHub from "components/github";
+import Github from "components/github";
 import Icon from "components/icon";
 import history from "lib/history";
 import * as AppPropTypes from "lib/app-prop-types";
@@ -58,6 +58,7 @@ class Lambda extends Component {
     constructor (props) {
         super(props);
         this.state = {
+            ...this.state,
             githubLoaded: false
         };
     }
@@ -70,7 +71,10 @@ class Lambda extends Component {
 
     componentWillReceiveProps (nextProps) {
         if (!this.state.githubLoaded && nextProps.lambda && nextProps.lambda.github) {
-            this.setState({githubLoaded: true});
+            this.setState({
+                ...this.state,
+                githubLoaded: true
+            });
             this.props.getGithubInfo(nextProps.lambda.github);
         }
     }
@@ -136,7 +140,7 @@ class Lambda extends Component {
                             />
                         </Col>
                         <Col md={4} xs={6}>
-                            <GitHub
+                            <Github
                                 collection={deploymentsCollection}
                                 info={githubInfo}
                             />
@@ -214,7 +218,7 @@ function mapStateToProps (state, props) {
         lambda: find(state.lambdas.collection, lambda => (
             lambda.environmentName === props.params.environmentName &&
             lambda.name === props.params.lambdaName
-        ))
+        )),
     };
 }
 function mapDispatchToProps (dispatch) {
