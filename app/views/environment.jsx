@@ -221,11 +221,12 @@ class Environment extends Component {
         const limit = get(status, "resources.core.limit", null);
         const remaining = get(status, "resources.core.remaining", null);
         const reset = get(status, "resources.core.reset", null);
-        if (limit &&  reset && (remaining < 10)) {
+        if (limit &&  reset && (remaining < 3)) {
             const resetDate = new Date(reset * 1000);
             return (
                 <Alert bsStyle="danger">
-                    {"Alert: you have reach the github API limit, next reset at " + resetDate}
+                    <strong>{"Alert: "}</strong>
+                    {" You have reached the github API limit, next reset " + getMoment(resetDate)}
                 </Alert>
             );
         }

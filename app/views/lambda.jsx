@@ -5,16 +5,19 @@ import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 import moment from "moment";
 import {Alert, Breadcrumb, Grid, Col} from "react-bootstrap";
+import {get} from "lodash";
 
 import {listEnvironments} from "actions/environments";
 import {createDeployment, listDeployments, clearDeploy} from "actions/deployments";
 import {listLambdas, upsertLambda} from "actions/lambdas";
-import {getGithubInfo} from "actions/github-info";
+import {getGithubInfo, getGithubStatus} from "actions/github-info";
 import UpsertLambdaForm from "components/upsert-lambda-form";
 import Github from "components/github";
 import Icon from "components/icon";
 import history from "lib/history";
 import * as AppPropTypes from "lib/app-prop-types";
+import {getMoment} from "lib/date-utils";
+
 const styles = {
     header: {
         position: "relative",
@@ -47,7 +50,9 @@ class Lambda extends Component {
         deployments: PropTypes.any,
         environmentName: PropTypes.string.isRequired,
         getGithubInfo : PropTypes.func.isRequired,
+        getGithubStatus: PropTypes.func.isRequired,
         githubInfo: PropTypes.any,
+        githubStatus: PropTypes.any,
         lambda: AppPropTypes.lambda,
         listDeployments: PropTypes.func.isRequired,
         listEnvironments: PropTypes.func.isRequired,
@@ -67,6 +72,7 @@ class Lambda extends Component {
         this.props.listDeployments();
         this.props.listEnvironments();
         this.props.listLambdas();
+        this.props.getGithubStatus();
     }
 
     componentWillReceiveProps (nextProps) {
@@ -106,10 +112,40 @@ class Lambda extends Component {
         return collection;
     }
 
+    checkApiLimit (status) {
+        const limit = get(status, "resources.core.limit", null);
+        const remaining = get(status, "resources.core.remaining", null);
+        const reset = get(status, "resources.core.reset", null);
+        return limit &&  reset && (remaining < 3);
+    }
+
+    renderGithub (status, githubInfo, deploymentsCollection) {
+
+        if (this.checkApiLimit(status)) {
+            const reset = get(status, "resources.core.reset", null);
+            const resetDate = new Date(reset * 1000);
+            return (
+                <Alert bsStyle="danger">
+                    <strong>{"Alert: "}</strong>
+                    {" You have reached the github API limit, next reset " + getMoment(resetDate)}
+                </Alert>
+            );
+        } else {
+            return (
+                <Github
+                    collection={deploymentsCollection}
+                    info={githubInfo}
+                />
+        );
+        }
+    }
+
     render () {
         const {deployments, lambda, environmentName, githubInfo} = this.props;
         const name = (lambda && lambda.name ? lambda.name : "");
         const deploymentsCollection = this.sortCollection(name, environmentName, deployments);
+        const status = (this.props.githubStatus ? this.props.githubStatus.data : null);
+
         return lambda ? (
             <div>
                 <div>
@@ -140,10 +176,7 @@ class Lambda extends Component {
                             />
                         </Col>
                         <Col md={4} xs={6}>
-                            <Github
-                                collection={deploymentsCollection}
-                                info={githubInfo}
-                            />
+                            {this.renderGithub(status, githubInfo, deploymentsCollection)}
                         </Col>
                     </Grid>
 
@@ -152,7 +185,7 @@ class Lambda extends Component {
                             <h3>{"Deployments"}</h3>
                         </div>
 
-                        {deployments.creationRunning ? null :
+                        {deployments.creationRunning /* || this.checkApiLimit(status) */ ? null :
                             <div>
                                 <Icon
                                     icon="cloud-upload"
@@ -219,6 +252,7 @@ function mapStateToProps (state, props) {
             lambda.environmentName === props.params.environmentName &&
             lambda.name === props.params.lambdaName
         )),
+        githubStatus: (state.githubInfo.githubStatus ? state.githubInfo.githubStatus : props.githubStatus)
     };
 }
 function mapDispatchToProps (dispatch) {
@@ -226,6 +260,7 @@ function mapDispatchToProps (dispatch) {
         createDeployment: bindActionCreators(createDeployment, dispatch),
         clearDeploy: bindActionCreators(clearDeploy, dispatch),
         getGithubInfo: bindActionCreators(getGithubInfo, dispatch),
+        getGithubStatus: bindActionCreators(getGithubStatus, dispatch),
         listDeployments: bindActionCreators(listDeployments, dispatch),
         listEnvironments: bindActionCreators(listEnvironments, dispatch),
         listLambdas: bindActionCreators(listLambdas, dispatch),
