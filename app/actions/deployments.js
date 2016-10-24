@@ -10,7 +10,7 @@ export const LAMBDA_DEPLOY_SUCCESS = "LAMBDA_DEPLOY_SUCCESS";
 export const LAMBDA_DELETE_SUCCESS = "LAMBDA_DELETE_SUCCESS";
 export const LAMBDA_DEPLOY_ERROR = "LAMBDA_DEPLOY_ERROR";
 
-export function createDeployment (environmentName, lambdaName, version) {
+export function createDeployment (environmentName, lambdaName, version, htmlUrl) {
     const settings = store.getState().settings;
     return async dispatch => {
         try {
@@ -21,7 +21,8 @@ export function createDeployment (environmentName, lambdaName, version) {
                 awsSecretAccessKey: settings.awsSecretAccessKey,
                 environmentName: environmentName,
                 lambdaName: lambdaName,
-                version: version
+                version: version,
+                htmlUrl: htmlUrl
             }, {
                 timeout: 120000,
             });

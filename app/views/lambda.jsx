@@ -17,6 +17,7 @@ import Icon from "components/icon";
 import history from "lib/history";
 import * as AppPropTypes from "lib/app-prop-types";
 import {getMoment} from "lib/date-utils";
+import {renderCommitUrl, lastCommit} from "lib/github-utils";
 
 const styles = {
     header: {
@@ -91,7 +92,8 @@ class Lambda extends Component {
 
     deploy () {
         const {createDeployment, environmentName, lambda, githubInfo} = this.props;
-        createDeployment(environmentName, lambda.name, githubInfo.general.version);
+        const commit = lastCommit(githubInfo.commits);
+        createDeployment(environmentName, lambda.name, githubInfo.general.version, commit.html_url);
     }
 
     clear () {
@@ -145,7 +147,6 @@ class Lambda extends Component {
         const name = (lambda && lambda.name ? lambda.name : "");
         const deploymentsCollection = this.sortCollection(name, environmentName, deployments);
         const status = (this.props.githubStatus ? this.props.githubStatus.data : null);
-
         return lambda ? (
             <div>
                 <div>
@@ -219,6 +220,11 @@ class Lambda extends Component {
                                      "awsRegion",
                                      "environmentName",
                                      "version",
+                                     {
+                                         key: "htmlUrl",
+                                         formattedKey: "Commit",
+                                         valueFormatter: htmlUrl => renderCommitUrl(htmlUrl)
+                                     },
                                      {
                                          key: "timestamp",
                                          valueFormatter: time => moment(time).format("HH:mm:ss - MMMM Do YYYY")

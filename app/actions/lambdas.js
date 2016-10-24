@@ -66,7 +66,6 @@ export function upsertLambda (environmentName, lambdaConfiguration) {
     };
 }
 
-
 export function upsertLambdaReset () {
     return {type: LAMBDA_UPSERT_RESET};
 }

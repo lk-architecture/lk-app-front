@@ -1,8 +1,8 @@
 import React, {Component, PropTypes} from "react";
 import {Alert, Well} from "react-bootstrap";
-import {get} from "lodash";
 
 import Icon from "components/icon";
+import {renderCommitUrl, lastCommit} from "lib/github-utils";
 
 const styles = {
     github: {
@@ -29,26 +29,38 @@ export default class Github extends Component {
     isLastDeployUpdated (deploymentsCollection, githubInfo) {
         const lastDeploy = deploymentsCollection[0];
         if (!githubInfo.loading && lastDeploy) {
-            const commit = this.lastCommit(githubInfo.commits);
-            if (commit) {
+            const commitElement = lastCommit(githubInfo.commits);
+            if (commitElement) {
+                const {author} = commitElement.commit;
                 return (lastDeploy.version ?
-                    (lastDeploy.version==githubInfo.general.version && lastDeploy.timestamp>commit.author.date)
+                    (lastDeploy.version==githubInfo.general.version && lastDeploy.timestamp>author.date)
                 :
-                    (lastDeploy.timestamp>commit.author.date)
+                    (lastDeploy.timestamp>author.date)
                 );
             }
         }
         return false;
     }
 
-    lastCommit (commits) {
-        return get(commits, "0.commit", null);
+    renderCommit (commitElement) {
+        const {author, message} = commitElement.commit;
+        return (
+            <div style={styles.github}>
+                <div>
+                    <b>{"Last Commit "}</b>
+                    {renderCommitUrl(commitElement.html_url)}
+                </div>
+                <div><b>{"date "}</b>{author.date}</div>
+                <div><b>{"message "}</b>{message}</div>
+                <div><b>{"author "}</b>{author.name}</div>
+                <div><b>{"email "}</b>{author.email}</div>
+            </div>
+        );
     }
 
     renderInfo (info, collection) {
-        const commit = this.lastCommit(info.commits);
-
-        return !info.loading && commit? (
+        const commitElement = lastCommit(info.commits);
+        return !info.loading && commitElement? (
             <div>
                 <Well>
                     <Icon
@@ -61,13 +73,7 @@ export default class Github extends Component {
                         <div><b>{"author "}</b>{info.general.author}</div>
                         <b>{"Description "}</b>{info.general.description}
                     </div>
-                    <div style={styles.github}>
-                        <div><b>{"Last Commit"}</b></div>
-                        <div><b>{"date "}</b>{commit.author.date}</div>
-                        <div><b>{"message "}</b>{commit.message}</div>
-                        <div><b>{"author "}</b>{commit.author.name}</div>
-                        <div><b>{"email "}</b>{commit.author.email}</div>
-                    </div>
+                    {this.renderCommit(commitElement)}
                 </Well>
                 <div style={styles.github}>
                     {this.renderWarnig (collection, info)}
